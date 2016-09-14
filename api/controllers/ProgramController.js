@@ -6,6 +6,13 @@
  */
 
 module.exports = {
-	
+
+
+
+  testEndpoint: function(req, res) {
+    return res.ok();
+  }
+
+
 };
 

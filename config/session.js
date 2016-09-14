@@ -74,12 +74,12 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  adapter: 'mongo',
+ /* adapter: 'mongo',
   host: 'localhost',
-  port: 27017,
+  port: 27018,
   db: 'AJ-PGS',
   collection: 'sessions',
-
+*/
   /***************************************************************************
   *                                                                          *
   * Optional Values:                                                         *
