@@ -13,13 +13,14 @@ module.exports = function (req, res, next) {
   var token = PGSTokenService.getToken(req);
 
   if (!token)
-    return req.badRequest({error: "No token provided"});
+    return res.badRequest({error: "No token provided"});
 
   else {
     request
       .get(sails.config.deploymentUrl + '/device/validateRequest')
       .send({token: token})
-      .end(function(err, resolve){
+      .end(function(err, response){
+        sails.log.debug(response.error.status)
         if (err){
           return res.forbidden({error: err})
         }
