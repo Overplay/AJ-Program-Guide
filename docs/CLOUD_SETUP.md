@@ -36,3 +36,6 @@ sudo mkdir mongodbPGS and chown/chgrp to mongodb
 
   run
 `sudo mongod --config /etc/mongodPGS.conf`
+
+
+//todo add it to pm2 and whatnot 
