@@ -27,6 +27,8 @@ module.exports.policies = {
   ***************************************************************************/
 
   '*': true,
-
+  'ProgramController': {
+    'testEndpoint' : ['validateRequest']
+  },
   wideOpen: false
 };
