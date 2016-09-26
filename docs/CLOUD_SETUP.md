@@ -3,7 +3,10 @@
 3. npm update as asahi user
 4. add the local.js file
 5. setup a second mongo instance
-sudo mongod --config /etc/mongodPGS.conf
+
+add this to a config file mongodPGS.conf  /etc
+
+```
 # Where and how to store data.
 storage:
   dbPath: /var/lib/mongodbPGS
@@ -23,3 +26,13 @@ systemLog:
 net:
   port: 27018
   bindIp: 127.0.0.1
+  ```
+
+
+
+in /var/lib
+sudo mkdir mongodbPGS and chown/chgrp to mongodb
+
+
+  run
+`sudo mongod --config /etc/mongodPGS.conf`
