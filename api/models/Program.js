@@ -17,7 +17,7 @@ module.exports = {
         },
 
         channel: {
-            type: 'integer'
+            type: 'string'
         },
 
         time: {

@@ -1,0 +1,44 @@
+/**
+ * Lineup.js
+ *
+ * @description :: Program lineups provided by the TVMedia.ca api
+ * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
+ */
+
+module.exports = {
+    attributes: {
+
+        lineupID: {
+            type: 'string'
+        },
+
+        name: {
+            type: 'string'
+        },
+
+        type: {
+            type: 'string'
+        },
+
+        providerID: {
+            type: 'string'
+        },
+
+        providerName: {
+            type: 'string'
+        },
+
+        serviceArea: {
+            type: 'string'
+        },
+
+        zip: {
+            type: 'array',
+            defaultsTo: []
+        },
+
+        guideData: {
+            type: 'json'
+        }
+    }
+};
