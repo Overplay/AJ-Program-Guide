@@ -38,4 +38,4 @@ sudo mkdir mongodbPGS and chown/chgrp to mongodb
 `sudo mongod --config /etc/mongodPGS.conf`
 
 
-//todo add it to pm2 and whatnot 
+//todo add it to pm2 and whatnot, also works with pm2 auto reload now 
