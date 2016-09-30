@@ -17,7 +17,7 @@ module.exports = {
         },
 
         channel: {
-            type: 'integer'
+            type: 'string'
         },
 
         time: {
@@ -39,6 +39,10 @@ module.exports = {
 
         bestPosition: {
             type: 'json'
+        },
+
+        lineup: {
+            model: 'lineup'
         }
     }
 
