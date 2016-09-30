@@ -24,7 +24,7 @@ module.exports = function (req, res, next) {
         if (err){
           return res.forbidden({error: err})
         }
-        next()
+        return next()
       })
   }
 
