@@ -12,11 +12,11 @@ module.exports = {
             type: 'string'
         },
 
-        name: {
+        lineupName: {
             type: 'string'
         },
 
-        type: {
+        lineupType: {
             type: 'string'
         },
 
@@ -37,8 +37,9 @@ module.exports = {
             defaultsTo: []
         },
 
-        guideData: {
-            type: 'json'
+        listings: {
+            collection: 'program',
+            via: 'lineup'
         }
     }
 };

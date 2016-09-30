@@ -39,6 +39,10 @@ module.exports = {
 
         bestPosition: {
             type: 'json'
+        },
+
+        lineup: {
+            model: 'lineup'
         }
     }
 
