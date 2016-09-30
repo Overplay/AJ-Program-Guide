@@ -34,8 +34,12 @@ in /var/lib
 sudo mkdir mongodbPGS and chown/chgrp to mongodb
 
 
-  run
-`sudo mongod --config /etc/mongodPGS.conf`
+ run
+`sudo mongod --config /etc/mongodPGS.conf &`
+
+## starting AJPGS
+- run `pm2 process.json`
+- run `pm2 save` to ensure proper restarts if the server goes down
 
 
-//todo add it to pm2 and whatnot, also works with pm2 auto reload now 
+## Make sure to set up git remote as ssh for pm2 auto pull to work
