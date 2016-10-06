@@ -45,7 +45,12 @@ module.exports = {
                 if (!lineup)
                     return res.notFound({ "error" : "Lineup not found" });
                 else {
-                    return res.toJSON(lineup.listings);
+                    lineup.lastAccessed = Date.now();
+                    return lineup.save()
+                          .then( function () {
+                              return res.toJSON(lineup.listings);
+                          })
+
                 }
             })
     }
