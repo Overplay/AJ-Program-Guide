@@ -9,13 +9,12 @@ var request = require('superagent-bluebird-promise');
 
 module.exports = {
 
-    findLineup: function (req, res) {
+    searchByZip: function (req, res) {
         if (!req.allParams().zip)
             return res.badRequest({ "error" : "No ZIP Code provided" });
 
         var zip = req.allParams().zip;
         var extended = req.allParams().extended;
-
 
         return Lineup.find({})
             .then( function (all) {
@@ -34,6 +33,25 @@ module.exports = {
             .catch( function (err) {
                 return res.serverError({ "error" : err.message });
             })
+    },
 
+    fetchListing: function (req, res) {
+        if (!req.allParams().id)
+            return res.badRequest({ "error" : "No lineup id specified" });
+
+        return Lineup.find(id)
+            .populate('listings')
+            .then( function (lineup) {
+                if (!lineup)
+                    return res.notFound({ "error" : "Lineup not found" });
+                else {
+                    lineup.lastAccessed = Date.now();
+                    return lineup.save()
+                          .then( function () {
+                              return res.toJSON(lineup.listings);
+                          })
+
+                }
+            })
     }
 };

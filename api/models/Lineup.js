@@ -40,6 +40,28 @@ module.exports = {
         listings: {
             collection: 'program',
             via: 'lineup'
+        },
+
+        lastAccessed: {
+            type: 'datetime',
+            defaultsTo: Date.now()
+        },
+
+        active: {
+            type: 'boolean',
+            defaultsTo: true
+        },
+
+        toJSON: function () {
+            var obj = this.toObject();
+
+            if (!sails.config.policies.wideOpen) {
+                delete obj.active;
+                delete obj.lineupID;
+                delete obj.providerID;
+            }
+
+            return obj;
         }
     }
 };
