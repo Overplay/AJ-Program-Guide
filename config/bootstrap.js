@@ -15,34 +15,43 @@ var moment = require('moment');
 
 module.exports.bootstrap = function(cb) {
 
-  var job = new CronJob('0 30 14 * * *', function () {
-    Lineup.find({})
+  var job = new CronJob('0 48 17 * * *', function () {
+
+    sails.log.info('Begin updating lineups');
+
+    Lineup.find({active: true})
       .then( function (lineups) {
-        lineups = _.filter(lineups, function (o) { return o.active; });
+
+        var chain = Promise.resolve();
         _.forEach(lineups, function (lineup) {
           var last = moment(lineup.lastAccessed);
           if (last.diff(moment(), 'days') > 7) {
             lineup.active = false;
-            lineup.save();
+            chain = chain.then( function () { return lineup.save() });
           }
           else {
-            request
-              .get(sails.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
-              .query({ lineupID: lineup.lineupID , api_key: sails.tvmedia.api_key })
-              .then( function (res) {
-                lineup.listings = res.data;
-                lineup.save();
-              })
-              .catch( function (err) {
-                sails.debug(err);
-              })
+            sails.log.debug('Accessing api');
+            chain = chain.then(function () {
+              return request
+                .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
+                .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key})
+                .then(function (res) {
+                  lineup.listings = res.text;
+                  return lineup.save();
+                })
+                .catch(function (err) {
+                  sails.log.debug(err);
+                })
+            })
           }
+        });
 
-        })
+        return chain;
       })
-  }, function () {
-    sails.log("Lineups updated")
-  }, true);
+      .then( function () {
+        sails.log.info("Lineups updated")
+      })
+  }, function () {}, true);
 
 
   cb();
