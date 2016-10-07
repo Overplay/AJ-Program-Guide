@@ -23,8 +23,8 @@ module.exports = {
                     return lineups;
                 else {
                     return request
-                        .get(sails.tvmedia.url + '/lineups')
-                        .query({ zip: zip, api_key: sails.tvmedia.api_key }) // get api key
+                        .get(sails.config.tvmedia.url + '/lineups')
+                        .query({ zip: zip, api_key: sails.config.tvmedia.api_key }) // get api key
                         .then( function (res) {
                             return res.data;
                         })
