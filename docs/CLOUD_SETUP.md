@@ -2,7 +2,10 @@
 2. set permissions to asahi asahi 775
 3. npm update as asahi user
 4. add the local.js file
-5. setup a second mongo instance
+
+# TWO Options
+# 1:  setup a second mongo instance
+- Different ports!
 
 add this to a config file mongodPGS.conf  /etc
 
@@ -36,6 +39,12 @@ sudo mkdir mongodbPGS and chown/chgrp to mongodb
 
  run
 `sudo mongod --config /etc/mongodPGS.conf &`
+
+
+# 2: Run as second DB on current mongo
+
+just edit connectiosn to have different DB name than asahi and ensure ports are the SAME
+
 
 ## starting AJPGS
 - run `pm2 process.json`
