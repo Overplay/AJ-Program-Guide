@@ -9,6 +9,8 @@ var request = require('superagent-bluebird-promise');
 
 module.exports = {
 
+  
+  //this is what devices will use? 
     searchByZip: function (req, res) {
         if (!req.allParams().zip)
             return res.badRequest({ "error" : "No ZIP Code provided" });
