@@ -3,14 +3,9 @@
  */
 
 
-//TODO this is for checking all lineups  and their devices most recent activity to see if lineups for their zips should be active. 
+var request = require('superagent-bluebird-promise');
+var moment = require('moment');
 
-/*
-get zip for each lineup, 
-get all devices for each zip, 
-check latest heartbeat data from each device 
-if within configured time, stay active, if not, set false for lineup. 
- */
 module.exports = function checkZIP(sails) {
 
   var activeZip;
@@ -47,14 +42,58 @@ module.exports = function checkZIP(sails) {
     check: function () {
       //step through devices and delete ones that aren't registered after the timeout
 
-      //group devices by zip - get that lineup, check the most recent 
-      
-      
-      
-      
-      
-      //TODO deal with the provider eventually lol 
-      
+
+      // get venues, group by address: {zip: }
+      request
+        .get(sails.config.deploymentUrl + '/api/v1/venue') //TODO policies
+        .end(function (err, venues) {
+          if (err) {
+            sails.log.debug(err)
+          }
+          else {
+            sails.log.debug(venues)
+
+            var byZip = _.groupBy(venues, function (v) {
+              return v.address.zip;
+            })
+
+//TODO NEEDS TESTING
+            _.forEach(byZip, function (val, key) {
+              var recent = null
+              _.forEach(val, function(v){
+                //go through the venues devices, comparing most recent heartbeat
+                _.forEach(v.devices, function(d){
+                  request
+                    .get(sails.config.deploymentUrl + '/device/deviceHeartbeat') //TODO policies
+                    .end(function (err, beats) {
+                      sails.log.debug(beats)
+                      if (!recent)
+                        recent = beats[0]
+                      if(moment(recent).isBefore(beats[0]))
+                        recent = beats[0]
+                    })
+                })
+
+              })
+             //if recent is not within range, change that zips lineups to inactive
+              //check zip, set inactive if need be
+            })
+//TODO multiple reqs could get funky, might need to async some shit
+          }
+        })
+
+
+      //get all devices for each group of venues
+
+      //find the most recent heartbeat for each zip
+
+      //check it to be within the time frame
+
+      //set active to T or F
+
+
+      //TODO deal with the provider eventually lol
+
       setTimeout(sails.hooks.checkZip.check, cronDelay);
 
     }
