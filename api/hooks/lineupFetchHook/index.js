@@ -59,7 +59,7 @@ module.exports = function fetchLineup(sails) {
                   .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
                   .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key})
                   .then(function (res) {
-                    lineup.listings = res.text;
+                    LineupParsingService.parse(res.text, lineup.id);
                     return lineup.save();
                   })
                   .catch(function (err) {
@@ -74,7 +74,7 @@ module.exports = function fetchLineup(sails) {
         .then( function () {
           sails.log.info("Lineups updated")
         })
-     
+
       setTimeout(sails.hooks.fetchLineup.fetch, cronDelay);
 
     }
