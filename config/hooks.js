@@ -1,15 +1,17 @@
 
 //cgrigsby 10/10/2016
 
-module.exports = {
-  
+module.exports.hooks = {
+
   lineupFetch: {
-    hookEnabled: true,
+    hookEnabled: false,
     delay: (1000 * 60 *60 * 24 * 1), // one day
   },
-  
+
   activeZip: {
-    
-  }
-  
+    hookEnabled: true,
+    delay: (1000 * 60 * 2),//*60 * 24 * 1) ,
+    beatWithin: 7, 
+  },
+
 }

@@ -6,10 +6,11 @@
 var request = require('superagent-bluebird-promise');
 var moment = require('moment');
 
-module.exports = function checkZIP(sails) {
+module.exports = function activeZIPHook(sails) {
 
   var activeZip;
   var cronDelay;
+  var within; 
 
 
   return {
@@ -27,12 +28,11 @@ module.exports = function checkZIP(sails) {
         sails.log.warn("There's no config file for device or its hook is disabled... ");
         return cb();
       }
-      //timeout = (1000 * 60);
       cronDelay = activeZip.delay || (1000 * 60 * 60 * 12);
-      //cronDelay = 10000;
-      sails.log.debug('Device cleaner will clean with this period: ' + cronDelay / 1000 + 's');
+      within = activeZip.beatWithin || 21; //days 
+      sails.log.debug('Device heartbeat will check with this period: ' + cronDelay / 1000 + 's');
 
-      setTimeout(sails.hooks.checkZip.check, cronDelay);
+      setTimeout(sails.hooks.activeziphook.check, cronDelay);
 
 
       return cb();
@@ -46,55 +46,66 @@ module.exports = function checkZIP(sails) {
       // get venues, group by address: {zip: }
       request
         .get(sails.config.deploymentUrl + '/api/v1/venue') //TODO policies
-        .end(function (err, venues) {
+        .end(function (err, data) {
           if (err) {
             sails.log.debug(err)
           }
           else {
-            sails.log.debug(venues)
-
+            sails.log.debug(data)
+            var venues = data.body
             var byZip = _.groupBy(venues, function (v) {
               return v.address.zip;
             })
 
-//TODO NEEDS TESTING
             _.forEach(byZip, function (val, key) {
               var recent = null
               _.forEach(val, function(v){
+                sails.log.debug(v.devices)
                 //go through the venues devices, comparing most recent heartbeat
-                _.forEach(v.devices, function(d){
+                async.each(v.devices, function(d, cb){
+                  sails.log.debug(d)
                   request
-                    .get(sails.config.deploymentUrl + '/device/deviceHeartbeat') //TODO policies
-                    .end(function (err, beats) {
+                    .get(sails.config.deploymentUrl + '/OGLog/deviceHeartbeat/' + d.id) //TODO policies
+                    .end(function (err, data) {
+                      if (err) cb(err)
+                      var beats = data.body
                       sails.log.debug(beats)
                       if (!recent)
-                        recent = beats[0]
-                      if(moment(recent).isBefore(beats[0]))
-                        recent = beats[0]
+                        recent = beats[0].loggedAt
+                      if(moment(recent).isBefore(beats[0].loggedAt))
+                        recent = beats[0].loggedAt
+                      cb();
                     })
+                }, function(err){
+                  if (err) sails.log.debug(err)
+                  sails.log.debug("RECENT ",recent)
+                  var zip = key;
+                  if (moment(recent).isBefore(moment().subtract(within).days())){
+                    Lineup.find()
+                      .then( function (all) {
+                        var lineups = _.filter(all, function (o) {
+                          return _.indexOf(o.zip, zip) != -1
+                        });
+                        lineups.forEach(function(l){
+                          l.active = false;
+                          l.save()
+                        })
+                      })
+                  }
                 })
 
-              })
-             //if recent is not within range, change that zips lineups to inactive
-              //check zip, set inactive if need be
+              });
+              
+              
+
             })
-//TODO multiple reqs could get funky, might need to async some shit
           }
         })
-
-
-      //get all devices for each group of venues
-
-      //find the most recent heartbeat for each zip
-
-      //check it to be within the time frame
-
-      //set active to T or F
-
+      
 
       //TODO deal with the provider eventually lol
 
-      setTimeout(sails.hooks.checkZip.check, cronDelay);
+      setTimeout(sails.hooks.activeziphook.check, cronDelay);
 
     }
 
