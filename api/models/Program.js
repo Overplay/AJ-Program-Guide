@@ -8,7 +8,7 @@
 module.exports = {
 
     attributes: {
-        programId: {
+        programID: {
             type: 'string'
         },
 
@@ -17,11 +17,16 @@ module.exports = {
         },
 
         channel: {
-            type: 'string'
+            type: 'integer'
         },
 
-        time: {
+        startTime: {
             type: 'datetime'
+        },
+
+        // duration in minutes
+        duration: {
+            type: 'integer'
         },
 
         description: {
