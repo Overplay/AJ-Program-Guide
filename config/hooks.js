@@ -9,7 +9,7 @@ module.exports.hooks = {
   },
 
   activeZip: {
-    hookEnabled: true,
+    hookEnabled: false,
     delay: (1000 * 60 * 2),//*60 * 24 * 1) ,
     beatWithin: 7, 
   },

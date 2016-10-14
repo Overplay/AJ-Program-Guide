@@ -13,6 +13,7 @@ module.exports = {
         programName: program.showName,
         channel: program.channelNumber,
         carrier: program.network
+        //TODO might have to deal with start time 
       })
         .then( function (p) {
           if (p) {
