@@ -54,16 +54,15 @@ module.exports = function lineupFetchHook(sails) {
             }
             else {
               sails.log.debug('Accessing api');
+              var endTime = moment().add(14, 'days').subtract(1, 'millisecond').toISOString();
+
               chain = chain.then(function () {
                 return request
                   .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
-                  .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key})
+                  .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime})
                   .then(function (res) {
-                    LineupParsingService.parse(res.text, lineup.id);
+                    LineupParsingService.parse(res.body, lineup.id);
                     return lineup.save();
-                  })
-                  .catch(function (err) {
-                    sails.log.debug(err);
                   })
               })
             }
@@ -73,6 +72,9 @@ module.exports = function lineupFetchHook(sails) {
         })
         .then( function () {
           sails.log.info("Lineups updated")
+        })
+        .catch( function (err) {
+          sails.log.error(err);
         })
 
       setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
