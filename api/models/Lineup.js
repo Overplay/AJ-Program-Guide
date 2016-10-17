@@ -4,12 +4,15 @@
  * @description :: Program lineups provided by the TVMedia.ca api
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
+var moment= require("moment")
+
 
 module.exports = {
     attributes: {
 
         lineupID: {
-            type: 'string'
+            type: 'string',
+            //primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
         },
 
         lineupName: {
@@ -44,7 +47,7 @@ module.exports = {
 
         lastAccessed: {
             type: 'datetime',
-            defaultsTo: Date.now()
+            defaultsTo: moment().format("YYYY-MM-DD HH:mm:ss")
         },
 
         active: {

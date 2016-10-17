@@ -4,7 +4,7 @@
 var request = require('superagent-bluebird-promise');
 var moment = require('moment');
 
-module.exports = function fetchLineup(sails) {
+module.exports = function lineupFetchHook(sails) {
 
   var fetchConfig;
   var cronDelay;
@@ -30,7 +30,7 @@ module.exports = function fetchLineup(sails) {
       //cronDelay = 10000;
       sails.log.debug('Device cleaner will clean with this period: ' + cronDelay / 1000 + 's');
 
-      setTimeout(sails.hooks.fetchLineup.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
       return cb();
@@ -77,7 +77,7 @@ module.exports = function fetchLineup(sails) {
           sails.log.error(err);
         })
 
-      setTimeout(sails.hooks.fetchLineup.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
     }
 
