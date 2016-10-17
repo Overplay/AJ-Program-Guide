@@ -5,6 +5,7 @@
   "description": "A side server to Applejack which serves program guide and best position data",
   "keywords": [],
   "dependencies": {
+    "async": "^2.1.2",
     "bluebird": "^3.4.6",
     "connect-mongo": "^0.8.2",
     "cron": "^1.1.0",

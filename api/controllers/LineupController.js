@@ -6,6 +6,8 @@
  */
 
 var request = require('superagent-bluebird-promise');
+var async = require('async')
+var moment = require('moment')
 
 module.exports = {
 
@@ -86,13 +88,16 @@ module.exports = {
   fetchPrograms: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
-    if (!req.allParams().provider)
+    if (!req.allParams().providerID)
       return res.badRequest({"error": "No provider Code provided"});
 //TODO provider id for api query
 
+
+    var chain = Promise.resolve();
     var zip = req.allParams().zip;
-    var prov = req.allParams().provider;
-    Lineup.find({})
+    var providerID = req.allParams().providerID;
+    sails.log.debug(zip, providerID)
+    Lineup.find()
       .then(function (all) {
         var lineups = _.filter(all, function (o) {
           return _.indexOf(o.zip, zip) != -1
@@ -109,10 +114,11 @@ module.exports = {
           sails.log.debug("woah")
           return request
             .get(sails.config.tvmedia.url + '/lineups')
-            .query({postalCode: zip, api_key: sails.config.tvmedia.api_key}) // TODO provider id
+            .query({postalCode: zip, providerID: providerID, api_key: sails.config.tvmedia.api_key}) // TODO provider id
             .then(function (r) {
               lineups = r.body;
-              aysnc.each(lineups, function (l) {
+              sails.log.debug(lineups)
+              async.eachSeries(lineups, function (l, cb) {
                 //save the lineup THEN retrieve and parse listings
                 var line = {
                   lineupID: l.lineupID,
@@ -120,26 +126,48 @@ module.exports = {
                   lineupType: l.lineupType,
                   providerID: l.providerID,
                   providerName: l.providerName,
-                  zip: [zip]
+                  //zip: [zip]
                 }
-
+                sails.log.debug(line)
                 Lineup.create(line)
                   .then(function (lineup) {
                     var endTime = moment().add(14, 'days').subtract(1, 'millisecond').toISOString();
-
+                    sails.log.debug(lineup)
                     request
                       .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
                       .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime})
                       .then(function (res) {
-                        LineupParsingService.parse(res.body, lineup.lineupID);
-                        return lineup.save();
+                        LineupParsingService.parse(res.body, lineup.lineupID)
+                          .then(function () {
+                            lineup.save(
+                              function (err) {
+                                if (err) cb(err)
+                                else
+                                  cb()
+                              }
+                            );
+                          })
+
+
                       })
-                  })
+
+                  }),
+                  function (err) {
+                    if (err) {
+                      sails.log.debug(err)
+                      return res.serverError({error: err})
+                    }
+                  }
+
               })
 
 
             })
+
+          return res.ok();
+
         }
+
       })
       .catch(function (err) {
         return res.serverError({"error": err});
