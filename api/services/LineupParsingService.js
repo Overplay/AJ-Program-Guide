@@ -18,7 +18,7 @@ module.exports = {
         })
         .then(function (p) {
           if (p) {
-            sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
+            //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
           }
           else {
             Program.create({
@@ -33,8 +33,9 @@ module.exports = {
                 lineup: lineupID
               })
               .then(function () {
-                sails.log.verbose(program.showName + " has been initialized");
+                //sails.log.verbose(program.showName + " has been initialized");
                 cb();
+                return null;  //deffered promise issue
               })
               .catch(function (err) {
                 sails.log.error(err);
