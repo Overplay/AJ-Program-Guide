@@ -20,7 +20,6 @@ module.exports = {
           if (p) {
             //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
             cb();
-            return null;
           }
           else {
             return Program.create({
@@ -43,6 +42,7 @@ module.exports = {
                  return cb(err)
               })
           }
+          return null; 
         })
 
     }, function (err) {
