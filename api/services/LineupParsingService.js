@@ -18,10 +18,11 @@ module.exports = {
         })
         .then(function (p) {
           if (p) {
-            sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
+            //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
+            cb();
           }
           else {
-            Program.create({
+            return Program.create({
                 programID: program.showID,
                 programName: program.showName,
                 channel: program.channelNumber,
@@ -33,14 +34,15 @@ module.exports = {
                 lineup: lineupID
               })
               .then(function () {
-                sails.log.verbose(program.showName + " has been initialized");
-                cb();
+                //sails.log.verbose(program.showName + " has been initialized");
+                 return cb();
               })
               .catch(function (err) {
                 sails.log.error(err);
-                cb(err)
+                 return cb(err)
               })
           }
+          return null; 
         })
 
     }, function (err) {
