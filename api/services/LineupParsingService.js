@@ -35,11 +35,11 @@ module.exports = {
               })
               .then(function () {
                 //sails.log.verbose(program.showName + " has been initialized");
-                cb();
+                return cb();
               })
               .catch(function (err) {
                 sails.log.error(err);
-                cb(err)
+                return cb(err)
               })
           }
           return null;
@@ -47,7 +47,7 @@ module.exports = {
 
     }, function (err) {
       sails.log.debug(err)
-      return Promise.resolve();
+      return null;
     });
 
     /*
