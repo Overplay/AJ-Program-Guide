@@ -177,5 +177,12 @@ module.exports = {
         return res.serverError({"error": err});
       })
 
+  },
+
+  //TODO delete befoer prod
+  removeLineups: function(req, res){
+    Lineup.destroy()
+      .then(function(){return Program.destroy()})
+      .then(function(){return res.ok()})
   }
 };
