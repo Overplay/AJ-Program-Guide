@@ -19,7 +19,8 @@ module.exports = {
         .then(function (p) {
           if (p) {
             //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
-            return cb();
+            cb();
+            return null;
           }
           else {
             return Program.create({
@@ -35,11 +36,11 @@ module.exports = {
               })
               .then(function () {
                 //sails.log.verbose(program.showName + " has been initialized");
-                return cb();
+                 return cb();
               })
               .catch(function (err) {
                 sails.log.error(err);
-                return cb(err)
+                 return cb(err)
               })
           }
         })
