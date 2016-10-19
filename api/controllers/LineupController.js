@@ -126,7 +126,7 @@ module.exports = {
                   lineupType: l.lineupType,
                   providerID: l.providerID,
                   providerName: l.providerName,
-                  //zip: [zip]
+                  zip: [zip]
                 }
                 sails.log.debug(line)
                 Lineup.create(line)
@@ -162,6 +162,10 @@ module.exports = {
               })
 
 
+            })
+            .catch(function(err){
+              sails.log.debug(err)
+              return res.serverError({error: err})
             })
 
           return res.ok();
