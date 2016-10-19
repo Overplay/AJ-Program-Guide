@@ -35,14 +35,14 @@ module.exports = {
               })
               .then(function () {
                 //sails.log.verbose(program.showName + " has been initialized");
-                 return cb();
+                cb();
               })
               .catch(function (err) {
                 sails.log.error(err);
-                 return cb(err)
+                cb(err)
               })
           }
-          return null; 
+          return null;
         })
 
     }, function (err) {
