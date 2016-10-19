@@ -21,7 +21,7 @@ module.exports = {
             //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
           }
           else {
-            Program.create({
+            return Program.create({
                 programID: program.showID,
                 programName: program.showName,
                 channel: program.channelNumber,
@@ -34,12 +34,11 @@ module.exports = {
               })
               .then(function () {
                 //sails.log.verbose(program.showName + " has been initialized");
-                cb();
-                return null;  //deffered promise issue
+                return cb();
               })
               .catch(function (err) {
                 sails.log.error(err);
-                cb(err)
+                return cb(err)
               })
           }
         })
