@@ -102,7 +102,7 @@ module.exports = {
         var lineups = _.filter(all, function (o) {
           return _.indexOf(o.zip, zip) != -1
         });
-        if (lineups.length && !extended) { //TODO provider
+        if (lineups.length) { //TODO provider
           //take lineups and return the listings of all of them
           var listings = []
           _.each(lineups, function (l) {
