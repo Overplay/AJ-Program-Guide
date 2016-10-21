@@ -13,7 +13,7 @@ module.exports = {
 
         lineupID: {
             type: 'string',
-            //primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
+            primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
         },
 
         lineupName: {

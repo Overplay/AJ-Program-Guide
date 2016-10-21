@@ -30,7 +30,7 @@ module.exports = function lineupFetchHook(sails) {
       //cronDelay = 10000;
       sails.log.debug('Device cleaner will clean with this period: ' + cronDelay / 1000 + 's');
 
-      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);
 
 
       return cb();

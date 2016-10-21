@@ -8,7 +8,7 @@ module.exports = {
     sails.log.info("Parsing lineup " + lineupID);
 
     async.eachSeries(listings, function (program, cb) {
-        return Program.findOne({
+        Program.findOne({
             programID: program.showID,
             programName: program.showName,
             channel: program.channelNumber,
@@ -21,7 +21,7 @@ module.exports = {
               //cb();
             }
             else {
-              return Program.create({
+              Program.create({
                   programID: program.showID,
                   programName: program.showName,
                   channel: program.channelNumber,
@@ -33,7 +33,7 @@ module.exports = {
                   lineup: lineupID
                 })
                 .then(function () {
-                  //sails.log.verbose(program.showName + " has been initialized");
+                  sails.log.verbose(program.showName + " has been initialized");
                   cb()
                 })
                 
