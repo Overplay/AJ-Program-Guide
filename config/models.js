@@ -29,8 +29,5 @@ module.exports.models = {
   *                                                                          *
   ***************************************************************************/
   migrate: 'safe',
-  terse: true,
-  
-  autoPK: false
-
+  terse: true
 };

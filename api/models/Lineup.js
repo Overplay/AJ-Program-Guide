@@ -9,6 +9,7 @@ var moment= require("moment")
 
 
 module.exports = {
+    autoPK: false,
     attributes: {
 
         lineupID: {
@@ -41,10 +42,10 @@ module.exports = {
             defaultsTo: []
         },
 
-        listings: {
+        /*listings: {
             collection: 'program',
             via: 'lineup'
-        },
+        },*/
 
         lastAccessed: {
             type: 'datetime',

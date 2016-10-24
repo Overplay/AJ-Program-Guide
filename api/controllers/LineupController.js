@@ -98,15 +98,11 @@ module.exports = {
         var lineups = _.filter(all, function (o) {
           return _.indexOf(o.zip, zip) != -1
         });
-        if (lineups.length) { //TODO provider
+        if (lineups.length) { //TODO this would work but too much data
           //take lineups and return the listings of all of them
           var listings = []
           sails.log.debug("LINEUP", lineups)
-          Program.find({
-              where: {
-                lineup: lineups[0].lineupID
-              }
-            })
+          Program.find( {lineupID: lineups[0].lineupID } )
             .then(function (p) {
               return res.ok(p)
             })
@@ -137,7 +133,7 @@ module.exports = {
 
                 return Lineup.create(line)
                   .then(function (lineup) {
-                    var endTime = moment().add(14, 'days').subtract(1, 'millisecond').toISOString();
+                    var endTime = moment().add(1, 'days').subtract(1, 'millisecond').toISOString();
 
                     return request
                       .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
@@ -176,5 +172,37 @@ module.exports = {
       .then(function () {
         return res.ok()
       })
+  },
+
+  //assumes lineup has been initialized already, might have to sep by days 
+  fetchListings: function(req, res) {
+    if (!req.allParams().zip)
+      return res.badRequest({"error": "No ZIP Code provided"});
+    if (!req.allParams().providerID)
+      return res.badRequest({"error": "No provider Code provided"});
+
+    var zip = req.allParams().zip;
+    var providerID = req.allParams().providerID;
+    Lineup.find({providerID: providerID})
+      .then(function (all) {
+        var lineups = _.filter(all, function (o) {
+          return _.indexOf(o.zip, zip) != -1
+        });
+        //take lineups and return the listings of all of them
+        var listings = []
+        sails.log.debug("LINEUP", lineups)
+        Program.find({lineupID: lineups[0].lineupID })
+          .then(function (p) {
+            return res.ok(p)
+          })
+          .catch(function (err) {
+            if (err) return res.serverError({error: err})
+          })
+      })
   }
+
+
+
+  //IDEA just add line up then call something else to start building it,
+  //get a day at a time
 };

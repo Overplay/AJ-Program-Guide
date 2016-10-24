@@ -23,20 +23,20 @@ module.exports = {
             else {
               Program.create({
                   programID: program.showID,
-                  programName: program.showName,
+                  programName: program.showName, //TODO deal with movies
                   channel: program.channelNumber,
                   startTime: new Date(program.listDateTime),
                   duration: program.duration,
                   description: program.description,
                   carrier: program.network,
-                  extra: program,
-                  lineup: lineupID
+                  //extra: program,
+                  lineupID: lineupID
                 })
                 .then(function () {
-                  sails.log.verbose(program.showName + " has been initialized");
+                  //sails.log.verbose(program.showName + " has been initialized");
                   cb()
                 })
-                
+
             }
           })
           .catch(function (err) {
@@ -46,7 +46,7 @@ module.exports = {
       }
 
     , function (err) {
-      sails.log.debug(err)
+      if (err) sails.log.debug(err)
       return Promise.resolve();
     })
   }
