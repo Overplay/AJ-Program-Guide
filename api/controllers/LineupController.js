@@ -89,7 +89,8 @@ module.exports = {
       return res.badRequest({"error": "No ZIP Code provided"});
     if (!req.allParams().providerID)
       return res.badRequest({"error": "No provider Code provided"});
-//TODO provider id for api query
+    if (!sails.config.tvmedia.api_key)
+      return res.serverError({error: "No API Key in Config"})
 
     var zip = req.allParams().zip;
     var providerID = req.allParams().providerID;
@@ -174,7 +175,59 @@ module.exports = {
       })
   },
 
-  //assumes lineup has been initialized already, might have to sep by days 
+  initialize: function(req, res) {
+    if (!req.allParams().zip)
+      return res.badRequest({"error": "No ZIP Code provided"});
+    if (!req.allParams().providerID)
+      return res.badRequest({"error": "No provider Code provided"});
+    if (!sails.config.tvmedia.api_key)
+      return res.serverError({error: "No API Key in Config"})
+
+    var zip = req.allParams().zip;
+    var providerID = req.allParams().providerID;
+    var lineups = []
+    request
+      .get(sails.config.tvmedia.url + '/lineups')
+      .query({postalCode: zip, providerID: providerID, api_key: sails.config.tvmedia.api_key})
+      .then(function (r) {
+        var body = r.body;
+        async.eachSeries(body, function (l, cb) {
+            //save the lineup THEN retrieve and parse listings
+            sails.log.debug(l)
+
+            var line = {
+              lineupID: l.lineupID,
+              lineupName: l.lineupName,
+              lineupType: l.lineupType,
+              providerID: l.providerID,
+              providerName: l.providerName,
+              zip: [zip]
+            };
+
+            Lineup.findOrCreate(line)
+              .then(function (lineup) {
+                //if it existed, add the zip to zips
+                lineups.push(lineup)
+                //TODO start populating programs if nec? 
+                cb()
+              })
+              .catch(function (err) {
+                cb(err)
+              })
+          },
+          function (err) {
+            if (err) return res.serverError({error: err})
+            return res.ok(lineups)
+          }
+        )
+      })
+
+  },
+
+  //TODO getting provider IDs for ZIP
+
+
+  //assumes lineup has been initialized already, might have to sep by days
   fetchListings: function(req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
