@@ -208,11 +208,11 @@ module.exports = {
               .then(function (lineup) {
                 //if it existed, add the zip to zips
                 lineups.push(lineup)
-                //TODO start populating programs if nec? 
-                cb()
+                //TODO start populating programs if nec?
+                return cb()
               })
               .catch(function (err) {
-                cb(err)
+                return cb(err)
               })
           },
           function (err) {
