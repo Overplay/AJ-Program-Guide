@@ -42,10 +42,11 @@ module.exports = function lineupFetchHook(sails) {
 
       sails.log.info('Begin updating lineups');
 
-      Lineup.find({active: true})
+      Lineup.find({ active: true })
         .then( function (lineups) {
 
           var chain = Promise.resolve();
+
           _.forEach(lineups, function (lineup) {
             var last = moment(lineup.lastAccessed);
             if (last.diff(moment(), 'days') > 7) {
@@ -81,8 +82,6 @@ module.exports = function lineupFetchHook(sails) {
 
     }
 
-
   }
-
 
 };
