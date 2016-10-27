@@ -4,7 +4,7 @@
 module.exports.hooks = {
 
   lineupFetch: {
-    hookEnabled: false,
+    hookEnabled: true,
     delay: (1000 * 60 *60 * 24 * 1), // one day
   },
 

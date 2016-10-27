@@ -9,7 +9,7 @@ module.exports = {
 
     attributes: {
         programID: {
-            type: 'string'
+            type: 'string',
         },
 
         programName: {
@@ -46,9 +46,11 @@ module.exports = {
             model: 'BestPosition'
         },
 
-        lineup: {
-            model: 'lineup'
-        }
+        lineupID: {
+            type: 'string' //lineupID
+        },
+
+
     }
 
 };

@@ -3,6 +3,7 @@
     "name"       : "AJPGS",
     "script"     : "app.js", //TODO change if nec. depends on file locations
     "instances": 1,
+    "max_memory_restart": "4G",
     "exec_mode": "cluster",
     "cwd" : "/opt/AJ-Program-Guide", //TODO change this if deploying in a different folder!
     "env": {

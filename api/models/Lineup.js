@@ -9,11 +9,12 @@ var moment= require("moment")
 
 
 module.exports = {
+    autoPK: false,
     attributes: {
 
         lineupID: {
             type: 'string',
-            //primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
+            primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
         },
 
         lineupName: {
@@ -41,10 +42,10 @@ module.exports = {
             defaultsTo: []
         },
 
-        listings: {
+        /*listings: {
             collection: 'program',
             via: 'lineup'
-        },
+        },*/
 
         lastAccessed: {
             type: 'datetime',
