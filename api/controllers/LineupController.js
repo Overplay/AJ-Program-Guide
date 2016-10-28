@@ -54,7 +54,7 @@ module.exports = {
     if (!req.allParams().id)
       return res.badRequest({"error": "No lineup id specified"});
 
-    var id = req.allParams().id
+    var id = req.allParams().id;
     return Lineup.find(id) //might have to specify lineup id
       .populate('listings')
       .then(function (lineup) {
@@ -159,7 +159,6 @@ module.exports = {
         }
       })
       .catch(function (err) {
-        sails.log.debug("WHTAT HTE AF ")
         return res.serverError({"error": err});
       })
 

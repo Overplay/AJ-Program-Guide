@@ -87,11 +87,7 @@ module.exports = function lineupFetchHook(sails) {
                 return cb(err)
               })
 
-
-          }, function(err){
-            if (err) sails.log.debug(err)
-            sails.log.info("Lineups updated")
-            setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
           })
