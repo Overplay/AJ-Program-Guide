@@ -10,6 +10,7 @@ var moment = require("moment")
 
 module.exports = {
 
+  //how many entries and pages with that etc 
 
   //this is what devices will use?
   searchByZip: function (req, res) {
