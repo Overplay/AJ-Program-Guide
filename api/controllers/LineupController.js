@@ -8,9 +8,11 @@
 var request = require('superagent-bluebird-promise');
 var moment = require("moment")
 
+var PROG_PER_PAGE = 1000;
+
+
 module.exports = {
 
-  //how many entries and pages with that etc 
 
   //this is what devices will use?
   searchByZip: function (req, res) {
@@ -104,7 +106,7 @@ module.exports = {
           //take lineups and return the listings of all of them
           var listings = []
           sails.log.debug("LINEUP", lineups)
-          Program.find( {lineupID: lineups[0].lineupID } )
+          Program.find({lineupID: lineups[0].lineupID})
             .then(function (p) {
               return res.ok(p)
             })
@@ -175,7 +177,7 @@ module.exports = {
       })
   },
 
-  initialize: function(req, res) {
+  initialize: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
     if (!req.allParams().providerID)
@@ -207,6 +209,7 @@ module.exports = {
             Lineup.findOrCreate(line)
               .then(function (lineup) {
                 //if it existed, add the zip to zips
+                sails.log.debug(lineup)
                 lineups.push(lineup)
                 //TODO start populating programs if nec?
                 return cb()
@@ -228,7 +231,7 @@ module.exports = {
 
 
   //assumes lineup has been initialized already, might have to sep by days
-  fetchListings: function(req, res) {
+  fetchListings: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
     if (!req.allParams().providerID)
@@ -244,7 +247,7 @@ module.exports = {
         //take lineups and return the listings of all of them
         var listings = []
         sails.log.debug("LINEUP", lineups)
-        Program.find({lineupID: lineups[0].lineupID })
+        Program.find({lineupID: lineups[0].lineupID})
           .then(function (p) {
             return res.ok(p)
           })
@@ -252,9 +255,92 @@ module.exports = {
             if (err) return res.serverError({error: err})
           })
       })
-  }
+  },
 
 
+  //pages
+
+  pages: function (req, res) {
+    if (!req.allParams().zip)
+      return res.badRequest({"error": "No ZIP Code provided"});
+    if (!req.allParams().providerID)
+      return res.badRequest({"error": "No provider Code provided"});
+
+    var zip = req.allParams().zip;
+    var providerID = req.allParams().providerID;
+
+    Lineup.find({
+        providerID: providerID
+      })
+      .then(function (all) {
+        sails.log.debug(all)
+        var lineupIDs = _.map(_.filter(all, function (o) {
+          if (_.indexOf(o.zip, zip) != -1)
+            return o.lineupID
+
+        }), 'lineupID');
+        sails.log.debug(lineupIDs)
+        if (lineupIDs.length)
+          return Program.count({
+              lineupID: lineupIDs,
+              startTime: {
+                '>': moment().subtract(10, 'hours').toISOString(),
+                '<': moment().add(14, 'days').subtract(1, 'millisecond').toISOString()
+              }
+            })
+            .then(function (count) {
+              sails.log.debug(count)
+              return res.ok({count: Math.ceil(count / PROG_PER_PAGE)})
+            })
+      })
+      .catch(function (err) {
+        return res.serverError({error: err})
+      })
+  },
+  //getPage:
+  //how many should be on a page...?
+  getPage: function (req, res) {
+    if (!req.allParams().zip)
+      return res.badRequest({"error": "No ZIP Code provided"});
+    if (!req.allParams().providerID)
+      return res.badRequest({"error": "No provider Code provided"});
+    if (!req.allParams().page)
+      return res.badRequest({"error": "No page number provided"});
+
+    var zip = req.allParams().zip;
+    var providerID = req.allParams().providerID;
+    var page = req.allParams().page;
+
+    Lineup.find({
+        providerID: providerID
+      })
+      .then(function (all) {
+        sails.log.debug(all)
+        var lineupIDs = _.map(_.filter(all, function (o) {
+          if (_.indexOf(o.zip, zip) != -1)
+            return o.lineupID
+
+        }), 'lineupID');
+        sails.log.debug(lineupIDs)
+        if (lineupIDs.length)
+          return Program.find({
+              where: {
+                lineupID: lineupIDs,
+                startTime: {
+                  '>': moment().subtract(10, 'hours').toISOString(),
+                  '<': moment().add(14, 'days').subtract(1, 'millisecond').toISOString()
+                }
+              }, sort: 'startTime'
+            })
+            .paginate({page: page, limit: PROG_PER_PAGE})
+            .then(function (prog) {
+              return res.ok(prog)
+            })
+      })
+      .catch(function (err) {
+        return res.serverError({error: err})
+      })
+  },
 
   //IDEA just add line up then call something else to start building it,
   //get a day at a time
