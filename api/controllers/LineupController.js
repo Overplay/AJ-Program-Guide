@@ -304,6 +304,8 @@ module.exports = {
               return res.ok({count: Math.ceil(count / PROG_PER_PAGE)})
             })
         }
+        else 
+          return res.ok({count: 0})
       })
       .catch(function (err) {
         return res.serverError({error: err})
