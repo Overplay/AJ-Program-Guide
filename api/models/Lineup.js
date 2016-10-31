@@ -9,12 +9,12 @@ var moment= require("moment")
 
 
 module.exports = {
-    autoPK: false,
+    //autoPK: false,
     attributes: {
 
         lineupID: {
             type: 'string',
-            primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
+          //primaryKey: true //set this to the primary key to keep it in line with tvmedia db and for program associations
         },
 
         lineupName: {
@@ -62,7 +62,7 @@ module.exports = {
 
             if (!sails.config.policies.wideOpen) {
                 delete obj.active;
-                delete obj.lineupID;
+                //delete obj.lineupID;
                 delete obj.providerID;
             }
 

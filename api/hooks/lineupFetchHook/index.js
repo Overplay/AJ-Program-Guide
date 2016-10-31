@@ -78,7 +78,6 @@ module.exports = function lineupFetchHook(sails) {
               .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime})
               .then(function (res) {
                  return LineupParsingService.parse(res.body, lineup.lineupID);
-
               })
               .then(function(){
                 sails.log.debug("callback")
@@ -88,11 +87,7 @@ module.exports = function lineupFetchHook(sails) {
                 return cb(err)
               })
 
-
-          }, function(err){
-            if (err) sails.log.debug(err)
-            sails.log.info("Lineups updated")
-            setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
           })
