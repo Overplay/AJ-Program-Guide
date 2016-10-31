@@ -19,6 +19,7 @@ module.exports = {
               })
               .then(function (p) {
                 if (p) {
+                  //Todo update? NEED TO PREVENT CONFLICTING SHOWS
                   //sails.log.verbose(program.showName + " already exists in database for lineup " + lineupID);
                   cb()
                   return null;

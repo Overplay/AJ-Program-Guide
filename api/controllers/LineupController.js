@@ -8,7 +8,7 @@
 var request = require('superagent-bluebird-promise');
 var moment = require("moment")
 
-var PROG_PER_PAGE = 1000;
+var PROG_PER_PAGE = 1000; //TODO
 
 
 module.exports = {
@@ -259,16 +259,24 @@ module.exports = {
 
 
   //pages
+  //TODO create map of providerNames and IDs?
+
 
   pages: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
     if (!req.allParams().providerID)
       return res.badRequest({"error": "No provider Code provided"});
+    if (!req.allParams().day)
+      sails.log.warn("No Day provided, will default to today")
 
     var zip = req.allParams().zip;
     var providerID = req.allParams().providerID;
+    var date = moment(req.allParams().day || moment().format("YYYY-MM-DD"))
+    var updatedSince = req.allParams().updatedSince;
 
+
+    //Defaults to today if no day given
     Lineup.find({
         providerID: providerID
       })
@@ -280,18 +288,22 @@ module.exports = {
 
         }), 'lineupID');
         sails.log.debug(lineupIDs)
-        if (lineupIDs.length)
-          return Program.count({
-              lineupID: lineupIDs,
-              startTime: {
-                '>': moment().subtract(10, 'hours').toISOString(),
-                '<': moment().add(14, 'days').subtract(1, 'millisecond').toISOString()
-              }
-            })
+        if (lineupIDs.length) {
+          var query = {
+            lineupID: lineupIDs,
+            startTime: {
+              '>': date.toISOString(),
+              '<': date.add(1, 'days').subtract(1, 'millisecond').toISOString()
+            }
+          }
+          if (updatedSince)
+            query.updatedAt = {'>': moment(updatedSince).toISOString()}
+          return Program.count(query)
             .then(function (count) {
               sails.log.debug(count)
               return res.ok({count: Math.ceil(count / PROG_PER_PAGE)})
             })
+        }
       })
       .catch(function (err) {
         return res.serverError({error: err})
@@ -299,6 +311,7 @@ module.exports = {
   },
   //getPage:
   //how many should be on a page...?
+  //number of pages different depending on updated since!
   getPage: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
@@ -306,10 +319,16 @@ module.exports = {
       return res.badRequest({"error": "No provider Code provided"});
     if (!req.allParams().page)
       return res.badRequest({"error": "No page number provided"});
+    if (!req.allParams().day)
+      sails.log.warn("No Day provided, will default to today")
 
+    var date = moment(req.allParams().day || moment().format("YYYY-MM-DD"))
+    //Defaults to today if no day given
     var zip = req.allParams().zip;
     var providerID = req.allParams().providerID;
     var page = req.allParams().page;
+    var updatedSince = req.allParams().updatedSince
+
 
     Lineup.find({
         providerID: providerID
@@ -322,20 +341,25 @@ module.exports = {
 
         }), 'lineupID');
         sails.log.debug(lineupIDs)
-        if (lineupIDs.length)
-          return Program.find({
-              where: {
-                lineupID: lineupIDs,
-                startTime: {
-                  '>': moment().subtract(10, 'hours').toISOString(),
-                  '<': moment().add(14, 'days').subtract(1, 'millisecond').toISOString()
-                }
-              }, sort: 'startTime'
-            })
+        if (lineupIDs.length) {
+          var query = {
+            where: {
+              lineupID: lineupIDs,
+              startTime: {
+                '>': date.toISOString(),
+                '<': date.add(1, 'days').subtract(1, 'millisecond').toISOString()
+              }
+            }, sort: 'startTime'
+          }
+
+          if (updatedSince)
+            query.where.updatedAt = {'>': moment(updatedSince).toISOString()}
+          return Program.find(query)
             .paginate({page: page, limit: PROG_PER_PAGE})
             .then(function (prog) {
               return res.ok(prog)
             })
+        }
       })
       .catch(function (err) {
         return res.serverError({error: err})
