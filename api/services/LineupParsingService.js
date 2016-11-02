@@ -11,12 +11,17 @@ module.exports = {
     return new Promise(function (resolve, reject) {
         async.eachSeries(listings, function (program, cb) {
             Program.findOne({
-                programID: program.showID,
-                programName: program.showName,
-                channel: program.channelNumber,
-                carrier: program.network
-                //TODO might have to deal with start time
-              })
+              programID: program.showID,
+              programName: program.showName,
+              episodeName: program.episodeTitle,
+              channel: program.channelNumber,
+              description: program.description,
+              duration: program.duration,
+              startTime: new Date(program.listDateTime),
+              carrier: program.name,
+              lineupID: lineupID
+              //TODO might have to deal with start time
+            })
               .then(function (p) {
                 if (p) {
                   //Todo update? NEED TO PREVENT CONFLICTING SHOWS
@@ -28,20 +33,22 @@ module.exports = {
                   return Program.create({
                       programID: program.showID,
                       programName: program.showName, //TODO deal with movies
+                      episodeName: program.episodeTitle,
                       channel: program.channelNumber,
                       startTime: new Date(program.listDateTime),
                       duration: program.duration,
                       description: program.description,
-                      carrier: program.network,
+                      carrier: program.name,
                       //extra: program,
                       lineupID: lineupID
                     })
                     .then(function (newProgram) {
                       //sails.log.verbose(program.showName + " has been initialized");
                       return BestPosition.findOrCreate({
-                          type: "series",
-                          seriesID: program.seriesID
-                        })
+                        type: "series",
+                        channel: program.name,
+                        seriesID: program.seriesID
+                      })
                         .then(function (bpProgram) {
                           if (bpProgram.adPosition && bpProgram.crawlerPosition) {
                             newProgram.bestPosition = bpProgram.id;
@@ -50,7 +57,7 @@ module.exports = {
                           else {
                             return BestPosition.findOrCreate({
                                 type: "channel",
-                                channel: program.channelNumber
+                                channel: program.name
                               })
                               .then(function (bpChannel) {
                                 // set ad and crawler position, either from the channel best position, or as defaults

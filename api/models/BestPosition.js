@@ -15,11 +15,11 @@ module.exports = {
     },
 
     seriesID: {
-      type: 'string'
+      type: 'integer'
     },
 
     channel: {
-      type: 'integer'
+      type: 'string'
     },
 
     crawlerPosition: {

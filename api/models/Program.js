@@ -9,10 +9,14 @@ module.exports = {
 
     attributes: {
         programID: {
-            type: 'string',
+            type: 'integer'
         },
 
         programName: {
+            type: 'text'
+        },
+
+        episodeName: {
             type: 'text'
         },
 
