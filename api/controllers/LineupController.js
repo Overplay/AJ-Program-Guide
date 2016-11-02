@@ -281,13 +281,13 @@ module.exports = {
         providerID: providerID
       })
       .then(function (all) {
-        sails.log.debug(all)
+        //sails.log.debug(all)
         var lineupIDs = _.map(_.filter(all, function (o) {
           if (_.indexOf(o.zip, zip) != -1)
             return o.lineupID
 
         }), 'lineupID');
-        sails.log.debug(lineupIDs)
+        //sails.log.debug(lineupIDs)
         if (lineupIDs.length) {
           var query = {
             lineupID: lineupIDs,
@@ -300,11 +300,11 @@ module.exports = {
             query.updatedAt = {'>': moment(updatedSince).toISOString()}
           return Program.count(query)
             .then(function (count) {
-              sails.log.debug(count)
+              //sails.log.debug(count)
               return res.ok({count: Math.ceil(count / PROG_PER_PAGE)})
             })
         }
-        else 
+        else
           return res.ok({count: 0})
       })
       .catch(function (err) {
@@ -314,6 +314,7 @@ module.exports = {
   //getPage:
   //how many should be on a page...?
   //number of pages different depending on updated since!
+  //DAY NEEDS TO BE YYYY-MM-DD so for jan 2 it would be 2016-01-02  NOT 2016-1-2
   getPage: function (req, res) {
     if (!req.allParams().zip)
       return res.badRequest({"error": "No ZIP Code provided"});
@@ -368,6 +369,4 @@ module.exports = {
       })
   },
 
-  //IDEA just add line up then call something else to start building it,
-  //get a day at a time
 };

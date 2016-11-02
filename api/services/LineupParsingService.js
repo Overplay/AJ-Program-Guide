@@ -5,6 +5,10 @@ const DEFAULT_SCROLLER_POSITION = "bottom";
 
 module.exports = {
 
+
+  //TODO handle "Movie", "Video on Demand", "Off Air" - the titling is weird
+  //channel name? station ID could be across carriers  
+
   parse: function (listings, lineupID) {
     //TODO parse a lineup by programs and save the programs
     sails.log.info("Parsing lineup " + lineupID);
