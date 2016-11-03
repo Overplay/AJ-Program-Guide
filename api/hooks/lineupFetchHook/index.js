@@ -81,15 +81,17 @@ module.exports = function lineupFetchHook(sails) {
                 return LineupParsingService.parse(res.body, lineup.lineupID);
               })
               .then(function(){
-                sails.log.debug("callback")
-                return cb()
+                sails.log.debug("callback");
+                return cb();
               })
               .catch(function(err){
+                sails.log.debug("Error fetching lineup data");
                 return cb(err)
               })
+          });
 
           setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
-        })
+
       })
     }
   }

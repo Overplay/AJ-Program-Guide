@@ -18,7 +18,7 @@ module.exports = {
       type: 'integer'
     },
 
-    channel: {
+    network: {
       type: 'string'
     },
 

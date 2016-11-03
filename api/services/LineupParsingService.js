@@ -18,7 +18,7 @@ module.exports = {
           description: program.description,
           duration: program.duration,
           startTime: new Date(program.listDateTime),
-          carrier: program.name,
+          carrier: (program.network || program.name),
           lineupID: lineupID
         })
           .then(function (newProgram) {
@@ -30,7 +30,7 @@ module.exports = {
 
             return BestPosition.findOrCreate({
               type: "series",
-              channel: program.name,
+              network: (program.network || program.name),
               seriesID: program.seriesID
             })
               .then(function (bpProgram) {
@@ -41,7 +41,7 @@ module.exports = {
                 else {
                   return BestPosition.findOrCreate({
                       type: "channel",
-                      channel: program.name
+                      network: (program.network || program.name)
                     })
                     .then(function (bpChannel) {
                       // set ad and crawler position, either from the channel best position, or as defaults
