@@ -31,6 +31,7 @@ module.exports = function lineupFetchHook(sails) {
       sails.log.debug('Lineup Fetches every: ' + cronDelay / 1000 + 's');
 
       setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
+      //setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
       return cb();

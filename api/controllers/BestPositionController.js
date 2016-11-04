@@ -12,6 +12,7 @@ module.exports = {
   //push new positions to boxes somehow...
 
   findAll: function (req, res) {
+    sails.log.debug("FINDALL")
     BestPosition.find({})
       .then( function (data) {
         res.ok(data);
