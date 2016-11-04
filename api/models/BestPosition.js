@@ -11,11 +11,20 @@ module.exports = {
 
     type: {
       type: 'string',
-      enum: ['channel', 'series']
+      enum: ['network', 'series']
     },
 
     seriesID: {
       type: 'integer'
+    },
+
+    seriesName: {
+      type: 'string'
+    },
+
+    seriesNetworks: {
+      type: 'array',
+      defaultsTo: []
     },
 
     network: {

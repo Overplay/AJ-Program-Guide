@@ -30,23 +30,31 @@ module.exports = {
 
             return BestPosition.findOrCreate({
               type: "series",
-              network: (program.network || program.name),
+              seriesName: program.showName,
               seriesID: program.seriesID
             })
               .then(function (bpProgram) {
+                // add network to series networks
+                if (_.indexOf(bpProgram.seriesNetworks, program.callsign, 0) === -1)
+                  bpProgram.seriesNetworks.push(program.callsign);
+
                 if (bpProgram.adPosition && bpProgram.crawlerPosition) {
                   newProgram.bestPosition = bpProgram.id;
-                  return newProgram.save();
+                  return newProgram.save()
+                    .then( function () {
+                      return bpProgram.save();
+                    });
                 }
                 else {
                   return BestPosition.findOrCreate({
-                      type: "channel",
-                      network: (program.network || program.name)
+                      type: "network",
+                      network: program.callsign
                     })
                     .then(function (bpChannel) {
                       // set ad and crawler position, either from the channel best position, or as defaults
                       bpChannel.adPosition = bpProgram.adPosition = bpChannel.adPosition || DEFAULT_AD_POSITION;
                       bpChannel.crawlerPosition = bpProgram.crawlerPosition = bpProgram.crawlerPosition || DEFAULT_SCROLLER_POSITION;
+
                       newProgram.bestPosition = bpProgram.id;
                       return newProgram.save()
                         .then(function () {
