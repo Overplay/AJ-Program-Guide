@@ -5,22 +5,30 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-
 module.exports = {
 
   attributes: {
 
     type: {
       type: 'string',
-      enum: ['channel', 'series']
+      enum: ['network', 'series']
     },
 
     seriesID: {
+      type: 'integer'
+    },
+
+    seriesName: {
       type: 'string'
     },
 
-    channel: {
-      type: 'integer'
+    seriesNetworks: {
+      type: 'array',
+      defaultsTo: []
+    },
+
+    network: {
+      type: 'string'
     },
 
     crawlerPosition: {

@@ -6,11 +6,20 @@
  */
 
 module.exports = {
-	
-  //Update position endpoint? 
-  
+
+  //Update position endpoint?
+
   //push new positions to boxes somehow...
-  
-  
+
+  findAll: function (req, res) {
+    BestPosition.find({})
+      .then( function (data) {
+        res.ok(data);
+      })
+      .catch( function (err) {
+        res.serverError({ "error" : err });
+      })
+  }
+
 };
 

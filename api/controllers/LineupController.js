@@ -6,7 +6,7 @@
  */
 
 var request = require('superagent-bluebird-promise');
-var moment = require("moment")
+var moment= require("moment");
 
 var PROG_PER_PAGE = 1000; //TODO
 
@@ -22,7 +22,7 @@ module.exports = {
     var zip = req.allParams().zip;
     var extended = req.allParams().extended;
 
-    sails.log.debug("AH")
+    sails.log.debug("AH");
 
     return Lineup.find({})
       .then(function (all) {
@@ -32,7 +32,7 @@ module.exports = {
         if (lineups.length && !extended)
           return res.ok(lineups);
         else {
-          sails.log.debug("woah")
+          sails.log.debug("woah");
           return request
             .get(sails.config.tvmedia.url + '/lineups')
             .query({postalCode: zip, api_key: sails.config.tvmedia.api_key}) // get api key
@@ -116,7 +116,7 @@ module.exports = {
 
         }
         else {
-          sails.log.debug("woah")
+          sails.log.debug("woah");
           return request
             .get(sails.config.tvmedia.url + '/lineups')
             .query({postalCode: zip, providerID: providerID, api_key: sails.config.tvmedia.api_key}) // TODO provider id

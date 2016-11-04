@@ -28,7 +28,7 @@ module.exports = function programCleanHook(sails) {
       cronDelay = activeClean.delay || (1000 * 60 * 60 * 24);
       days = activeClean.days || 1;
 
-      setTimeout(sails.hooks.programcleanhook.clean, cronDelay);
+      setTimeout(sails.hooks.programcleanhook.clean, 60000);
 
       return cb();
     },
@@ -59,7 +59,7 @@ module.exports = function programCleanHook(sails) {
           sails.log.error(err);
         })
 
-      setTimeout(sails.hooks.programcleanhook.clean, 1000 * 60 * 60 * 24);
+      setTimeout(sails.hooks.programcleanhook.clean, cronDelay);
 
     }
   }
