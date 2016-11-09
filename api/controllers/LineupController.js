@@ -203,16 +203,25 @@ module.exports = {
               lineupType: l.lineupType,
               providerID: l.providerID,
               providerName: l.providerName,
-              zip: [zip]
+              //zip: [zip]
             };
 
             Lineup.findOrCreate(line)
               .then(function (lineup) {
                 //if it existed, add the zip to zips
                 sails.log.debug(lineup)
-                lineups.push(lineup)
-                //TODO start populating programs if nec?
-                return cb()
+                lineup.zip = _.union([zip],lineup.zip)
+                lineup.save(function(){
+                  lineups.push(lineup)
+                  //TODO start populating programs if nec?
+                  if(lineup.zip.length == 1) {
+                    //call parsing service since it is a new lineup
+                    //this would involve a request tho ughhhhhh
+                    sails.hooks.lineupfetchhook.fetch(false)
+                  }
+                  return cb()
+                })
+
               })
               .catch(function (err) {
                 return cb(err)

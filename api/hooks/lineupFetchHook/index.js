@@ -38,9 +38,10 @@ module.exports = function lineupFetchHook(sails) {
 
     },
 
-    fetch: function () {
+    fetch: function (timeout) {
       //step through devices and delete ones that aren't registered after the timeout
-
+      var timeout = typeof(timeout) == 'undefined'
+      sails.log.debug(timeout)
       sails.log.info('Begin updating lineups');
 
       Lineup.find({active: true})
@@ -72,6 +73,12 @@ module.exports = function lineupFetchHook(sails) {
             //save the lineup THEN retrieve and parse listings
             //sails.log.debug(lineup)
 
+            if(moment(lineup.updatedAt).isBefore(moment().subtract(18,'hours'))){
+              sails.log.debug("recently updated ")
+              return cb()
+            }
+
+
             var endTime = moment().add(14, 'days').subtract(1, 'millisecond').toISOString();
 
             request
@@ -83,7 +90,12 @@ module.exports = function lineupFetchHook(sails) {
               })
               .then(function(){
                 sails.log.debug("callback");
-                return cb();
+                //only updates time if above completes :) 
+                lineup.updatedAt = moment().toISOString()
+                lineup.save(function(){
+                  return cb();
+
+                });
               })
               .catch(function(err){
                 sails.log.debug("Error fetching lineup data");
@@ -91,7 +103,8 @@ module.exports = function lineupFetchHook(sails) {
               })
           });
 
-          setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+          if (timeout)
+            setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
       })
     }
