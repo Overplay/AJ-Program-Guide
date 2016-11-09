@@ -15,7 +15,7 @@ var moment = require('moment');
 
 module.exports.bootstrap = function(cb) {
 
-  var job = new CronJob('0 48 17 * * *', function () {
+  /*var job = new CronJob('0 48 17 * * *', function () {
 
     sails.log.info('Begin updating lineups');
 
@@ -52,7 +52,7 @@ module.exports.bootstrap = function(cb) {
         sails.log.info("Lineups updated")
       })
   }, function () {}, true);
-
+*/
 
   cb();
 };
