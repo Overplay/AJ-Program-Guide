@@ -7,16 +7,21 @@ module.exports = {
 
 
   //TODO handle "Movie", "Video on Demand", "Off Air" - the titling is weird
-  //channel name? station ID could be across carriers  
+  //channel name? station ID could be across carriers
 
   parse: function (listings, lineupID) {
     //TODO parse a lineup by programs and save the programs
     sails.log.info("Parsing lineup " + lineupID);
     return new Promise(function (resolve, reject) {
       async.eachSeries(listings, function (program, cb) {
+        var programName = program.showName //TODO FIX FOR MOVIES
+        if (program.showTypeID == "M"){
+          programName = program.episodeTitle
+        }
+
         Program.findOrCreate({
           programID: program.showID,
-          programName: program.showName,
+          programName: programName,
           episodeName: program.episodeTitle,
           channel: program.channelNumber,
           description: program.description,
@@ -26,15 +31,15 @@ module.exports = {
           lineupID: lineupID
         })
           .then(function (newProgram) {
-            //sails.log.verbose(program.showName + " has been initialized");
+           // sails.log.verbose(program.showName + " has been initialized");
 
             if (newProgram.bestPosition) {
               return null;
             }
 
-            return BestPosition.findOrCreate({
+            return BestPosition.findOrCreate({ //TODO COULD BE MOVIE TOO
               type: "series",
-              seriesName: program.showName,
+              seriesName: programName,
               seriesID: program.seriesID
             })
               .then(function (bpProgram) {
