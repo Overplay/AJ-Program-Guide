@@ -30,8 +30,8 @@ module.exports = function lineupFetchHook(sails) {
       //cronDelay = 10000;
       sails.log.debug('Lineup Fetches every: ' + cronDelay / 1000 + 's');
 
-      setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
-      //setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      //setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
+      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
       return cb();
@@ -68,7 +68,7 @@ module.exports = function lineupFetchHook(sails) {
               })
               .then(function(){
                 sails.log.debug("callback");
-                //only updates time if above completes :) 
+                //only updates time if above completes :)
                 lineup.updatedAt = moment().toISOString()
                 lineup.save(function(){
                   return cb();
