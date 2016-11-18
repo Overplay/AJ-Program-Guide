@@ -41,11 +41,6 @@ module.exports = {
             type: 'text'
         },
 
-        extra: {
-            type: 'json',
-            defaultsTo: {}
-        },
-
         bestPosition: {
             model: 'BestPosition'
         },

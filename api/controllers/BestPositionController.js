@@ -20,7 +20,8 @@ module.exports = {
       .catch( function (err) {
         res.serverError({ "error" : err });
       })
-  }
+  },
+
 
 };
 
