@@ -47,7 +47,7 @@ just edit connectiosn to have different DB name than asahi and ensure ports are 
 
 
 ## starting AJPGS
-- run `pm2 process.json`
+- run `pm2 start process.json`
 - run `pm2 save` to ensure proper restarts if the server goes down
 
 

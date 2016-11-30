@@ -30,8 +30,8 @@
     "sails": "~0.12.3",
     "sails-disk": "~0.10.9",
     "sails-mongo": "^0.12.1",
-    "superagent": "^2.2.0",
-    "superagent-bluebird-promise": "^4.0.0"
+    "superagent": "^2.3.0",
+    "superagent-bluebird-promise": "^4.1.0"
   },
   "scripts": {
     "debug": "node debug app.js",
