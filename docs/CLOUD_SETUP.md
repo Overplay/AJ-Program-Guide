@@ -45,6 +45,23 @@ sudo mkdir mongodbPGS and chown/chgrp to mongodb
 
 just edit connectiosn to have different DB name than asahi and ensure ports are the SAME
 
+# On DO server, you need to add swap memory
+- source: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+1. Check if swap enabled with `sudo swapon -s`
+2. Check available mem with `df -h`
+3. Create a swapfile :
+  - `sudo fallocate -l 4G /swapfile`
+4. Check it `ls -lh /swapfile`
+5. Enable swap
+  - `sudo chmod 600 /swapfile`
+  - `sudo mkswap /swapfile`
+  - `sudo swapon /swapfile`
+ 6. Make the Swap File permanent (in case of reboot)
+  - `sudo vi /etc/fstab`
+  - at the end of the file add `/swapfile   none    swap    sw    0   0`
+  - Save and close!
+
+
 
 ## starting AJPGS
 - run `pm2 start process.json`
