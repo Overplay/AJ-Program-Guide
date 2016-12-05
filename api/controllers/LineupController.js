@@ -8,7 +8,7 @@
 var request = require('superagent-bluebird-promise');
 var moment= require("moment");
 
-var PROG_PER_PAGE = 1000; //TODO
+var PROG_PER_PAGE = 500; //TODO
 
 
 module.exports = {

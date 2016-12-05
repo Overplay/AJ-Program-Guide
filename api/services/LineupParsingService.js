@@ -28,7 +28,25 @@ module.exports = {
           duration: program.duration,
           startTime: new Date(program.listDateTime),
           carrier: (program.network || program.name),
-          lineupID: lineupID
+          lineupID: lineupID,
+          stationID: program.stationID,
+          name: program.name,
+          callsign: program.name,
+          network: program.network,
+          logoFilename: program.logoFilename,
+          showType: program.showType,
+          showTypeID: program.showTypeID,
+          league: program.league,
+          team1ID: program.team1ID,
+          team1: program.team1,
+          team2ID: program.team2ID,
+          team2: program.team2,
+          hd: program.hd,
+          event: program.event,
+          location: program.location,
+          showPicture: program.showPicture,
+          artwork: program.artwork
+          
         })
           .then(function (newProgram) {
            // sails.log.verbose(program.showName + " has been initialized");
