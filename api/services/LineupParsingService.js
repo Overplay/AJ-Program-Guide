@@ -3,6 +3,8 @@
 const DEFAULT_AD_POSITION = "top-right";
 const DEFAULT_SCROLLER_POSITION = "bottom";
 
+var crypto = require("crypto");
+
 module.exports = {
 
 
@@ -12,6 +14,7 @@ module.exports = {
   parse: function (listings, lineupID) {
     //TODO parse a lineup by programs and save the programs
     sails.log.info("Parsing lineup " + lineupID);
+
     return new Promise(function (resolve, reject) {
       async.eachSeries(listings, function (program, cb) {
         var programName = program.showName //TODO FIX FOR MOVIES
@@ -19,7 +22,8 @@ module.exports = {
           programName = program.episodeTitle
         }
 
-        Program.findOrCreate({
+        //sails.log.debug("start")
+        var programObj = {
           programID: program.showID,
           programName: programName,
           episodeName: program.episodeTitle,
@@ -46,16 +50,71 @@ module.exports = {
           location: program.location,
           showPicture: program.showPicture,
           artwork: program.artwork
-          
+        }
+
+
+        var hash = crypto.createHash("md5").update(programObj.stationID + programObj.startTime).digest('hex')
+        //TODO maybe go to hash to individualize things
+        
+        
+        Program.findOne({
+          hashKey: hash
+        }).
+          then(function(p){
+          if (p){
+            //update p
+            return Program.update({hashKey: hash}, programObj)
+              .then(function(updated){
+                //sails.log.debug("UPDATED:" + updated)
+                if(updated.length > 1){
+                  sails.log.debug(updated)
+                  sails.log.debug("FUCK FUCK FUCK UPDATED MORE THAN 1 PROG")
+                }
+              })
+          }
+          else{
+            //create p 
+            programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
+            programObj.hashKey = hash;
+            return Program.create(programObj)
+              .then(function(){
+                
+              })
+          }
+        })
+        /*Program.findOrCreate({
+          hashKey: hash
+
         })
           .then(function (newProgram) {
            // sails.log.verbose(program.showName + " has been initialized");
+            //sails.log.debug(newProgram);
 
-            if (newProgram.bestPosition) {
+
+           /* if (newProgram.bestPosition) { //EXists
               return null;
-            }
+            }*
 
-            return BestPosition.findOrCreate({ //TODO COULD BE MOVIE TOO
+            //update with programObj
+            if (!newProgram.bestPosition) { 
+              programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
+            }
+            //else 
+              //sails.log.debug("EXISTS")
+
+
+            //update other fields if nec. 
+            return Program.update({hashKey: hash}, programObj)
+              .then(function(updated){
+                //sails.log.debug("UPDATED:" + updated)
+                if(updated.length > 1){
+                  sails.log.debug(updated)
+                  sails.log.debug("FUCK FUCK FUCK UPDATED MORE THAN 1 PROG")
+                }
+              })
+
+
+            /*return BestPosition.findOrCreate({ //TODO COULD BE MOVIE TOO
               type: "series",
               seriesName: programName,
               seriesID: program.seriesID
@@ -92,10 +151,12 @@ module.exports = {
                         })
                     })
                 }
-              })
-          })
+              })*/
+          //})
           .then(function () {
             //sails.log.verbose(program.showName + " has been initialized");
+            //sails.log.debug("done")
+            
             cb();
             return null;
           })

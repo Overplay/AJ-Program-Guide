@@ -57,7 +57,7 @@ module.exports = function lineupFetchHook(sails) {
             }
 
 
-            var endTime = moment().add(14, 'days').subtract(1, 'millisecond').toISOString();
+            var endTime = moment().add(2, 'days').subtract(1, 'millisecond').toISOString();
 
             request
               .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")

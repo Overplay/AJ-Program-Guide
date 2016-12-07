@@ -41,8 +41,12 @@ module.exports = {
       type: 'text'
     },
 
-    bestPosition: {
-      model: 'BestPosition'
+    //bestPosition: {
+   //   model: 'BestPosition'
+    //},
+    
+    bestPostions: {
+      type: 'object'
     },
 
     lineupID: {
@@ -99,6 +103,9 @@ module.exports = {
     },
     artwork: {
       type: 'array'
+    },
+    hashKey: {
+      type: 'string'
     }
 
 
