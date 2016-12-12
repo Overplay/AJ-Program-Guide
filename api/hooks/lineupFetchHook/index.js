@@ -83,6 +83,7 @@ module.exports = function lineupFetchHook(sails) {
             if (err){
               sails.log.debug("Lineup not updated" + err.message)
               //retry? //TODO THIS IS BAD PROBSKIS MAYBE TEXTBAD
+              setTimeout(sails.hooks.lineupfetchhook.fetch(false), 1000 * 60);
             }
           });
 
