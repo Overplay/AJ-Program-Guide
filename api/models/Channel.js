@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
     number: {
-      type: "string"
+      type: "text"
     },
 
     channelNumber: {
@@ -25,19 +25,19 @@ module.exports = {
     },
 
     name: {
-      type: "string"
+      type: "text"
     },
 
     callsign: {
-      type: "string"
+      type: "text"
     },
 
     network: {
-      type: "string"
+      type: "text"
     },
 
     stationType: {
-      type: "string"
+      type: "text"
     },
 
     NTSC_TSID: {
@@ -49,19 +49,19 @@ module.exports = {
     },
 
     webLink: {
-      type: "string"
+      type: "text"
     },
 
     logoFilename: {
-      type: "string"
+      type: "text"
     },
 
     stationHD: {
-      type: "string"
+      type: "text"
     },
 
     lineupID: {
-      type: "string"
+      type: "text"
     }
   }
 
