@@ -47,6 +47,26 @@ module.exports = {
   },
 
 
+  add: function (req, res) {
+    var params = req.allParams();
+    var zip = req.allParams.zip;
+    delete params.zip;
+
+    if (!params.lineupID || !params.lineupName)
+      return res.badRequest({"error": "No lineup id or lineup name"});
+
+    return Lineup.findOrCreate(params)
+      .then( function (lineup) {
+        if (lineup.zip.length === 0) {
+          lineup.zip.push(zip);
+        }
+        return lineup.save()
+          .then( function () {
+            return res.toJSON(lineup);
+          })
+      })
+
+  },
   //multiple lineups per zip may be nec.
 
 
