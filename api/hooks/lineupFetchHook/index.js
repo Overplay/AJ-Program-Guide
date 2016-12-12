@@ -40,8 +40,8 @@ module.exports = function lineupFetchHook(sails) {
 
     fetch: function (timeout) {
       //step through devices and delete ones that aren't registered after the timeout
-      var timeout = typeof(timeout) == 'undefined'
-      sails.log.debug(timeout)
+      var timeout = typeof(timeout) == 'undefined';
+      sails.log.debug(timeout);
       sails.log.info('Begin updating lineups');
 
       Lineup.find({active: true})
@@ -49,21 +49,20 @@ module.exports = function lineupFetchHook(sails) {
 
           async.eachSeries(lineups, function (lineup, cb) {
             //save the lineup THEN retrieve and parse listings
-            //sails.log.debug(lineup)
+            sails.log.debug(lineup)
 
-            if(moment(lineup.updatedAt).isBefore(moment().subtract(18,'hours'))){
+            if(moment(lineup.updatedAt).isAfter(moment().subtract(12,'hours'))){
               sails.log.debug("recently updated ")
               return cb()
             }
 
-
             var endTime = moment().add(2, 'days').subtract(1, 'millisecond').toISOString();
 
             request
-              .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
-              .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime})
+              .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings/grid")
+              .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime, timezone: sails.config.tvmedia.timezone})
               .then(function (res) {
-                sails.log.verbose("Found " + res.body.length + " programs");
+                sails.log.verbose("Found " + res.body.length + " channels");
                 return LineupParsingService.parse(res.body, lineup.lineupID);
               })
               .then(function(){
@@ -79,6 +78,12 @@ module.exports = function lineupFetchHook(sails) {
                 sails.log.debug("Error fetching lineup data");
                 return cb(err)
               })
+          }, function(err){
+            if (err){
+              sails.log.debug("Lineup not updated" + err.message)
+              //retry? //TODO THIS IS BAD PROBSKIS MAYBE TEXTBAD
+              setTimeout(sails.hooks.lineupfetchhook.fetch(false), 1000 * 60 * 30);
+            }
           });
 
           if (timeout)
