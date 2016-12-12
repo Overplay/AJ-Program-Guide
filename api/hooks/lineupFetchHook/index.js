@@ -51,7 +51,7 @@ module.exports = function lineupFetchHook(sails) {
             //save the lineup THEN retrieve and parse listings
             sails.log.debug(lineup)
 
-            if(moment(lineup.updatedAt).isBefore(moment().subtract(18,'hours'))){
+            if(moment(lineup.updatedAt).isAfter(moment().subtract(12,'hours'))){
               sails.log.debug("recently updated ")
               return cb()
             }
