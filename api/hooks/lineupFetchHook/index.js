@@ -79,6 +79,11 @@ module.exports = function lineupFetchHook(sails) {
                 sails.log.debug("Error fetching lineup data");
                 return cb(err)
               })
+          }, function(err){
+            if (err){
+              sails.log.debug("Lineup not updated" + err.message)
+              //retry? //TODO THIS IS BAD PROBSKIS MAYBE TEXTBAD
+            }
           });
 
           if (timeout)
