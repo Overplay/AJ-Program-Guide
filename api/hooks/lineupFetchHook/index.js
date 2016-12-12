@@ -56,14 +56,13 @@ module.exports = function lineupFetchHook(sails) {
               return cb()
             }
 
-
             var endTime = moment().add(2, 'days').subtract(1, 'millisecond').toISOString();
 
             request
-              .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings")
-              .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime})
+              .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + "/listings/grid")
+              .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime, timezone: sails.config.tvmedia.timezone})
               .then(function (res) {
-                sails.log.verbose("Found " + res.body.length + " programs");
+                sails.log.verbose("Found " + res.body.length + " channels");
                 return LineupParsingService.parse(res.body, lineup.lineupID);
               })
               .then(function(){
@@ -83,7 +82,7 @@ module.exports = function lineupFetchHook(sails) {
             if (err){
               sails.log.debug("Lineup not updated" + err.message)
               //retry? //TODO THIS IS BAD PROBSKIS MAYBE TEXTBAD
-              setTimeout(sails.hooks.lineupfetchhook.fetch(false), 1000 * 60);
+              setTimeout(sails.hooks.lineupfetchhook.fetch(false), 1000 * 60 * 30);
             }
           });
 

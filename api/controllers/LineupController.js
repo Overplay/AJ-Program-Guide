@@ -9,7 +9,7 @@ var request = require('superagent-bluebird-promise');
 var moment= require("moment");
 
 var PROG_PER_PAGE = 250; //TODO
-
+var CHAN_PER_PAGE = 10;
 
 module.exports = {
 
@@ -254,7 +254,7 @@ module.exports = {
           return _.indexOf(o.zip, zip) != -1
         });
         //take lineups and return the listings of all of them
-        var listings = []
+        var channels = []
         sails.log.debug("LINEUP", lineups)
         Program.find({lineupID: lineups[0].lineupID})
           .then(function (p) {
@@ -307,10 +307,10 @@ module.exports = {
           }
           if (updatedSince)
             query.updatedAt = {'>': moment(updatedSince).toISOString()}
-          return Program.count(query)
+          return Channel.count(query)
             .then(function (count) {
               //sails.log.debug(count)
-              return res.ok({count: Math.ceil(count / PROG_PER_PAGE)})
+              return res.ok({count: Math.ceil(count / CHAN_PER_PAGE)})
             })
         }
         else
@@ -354,23 +354,44 @@ module.exports = {
         }), 'lineupID');
         sails.log.debug(lineupIDs)
         if (lineupIDs.length) {
-          var query = {
-            where: {
-              lineupID: lineupIDs,
-              startTime: {
-                '>': date.toISOString(),
-                '<': date.add(1, 'days').subtract(1, 'millisecond').toISOString()
-              }
-            }, sort: 'startTime'
-          }
+          var listings = []
+          return Channel.find({where: {
+            lineupID: lineupIDs}, sort: 'channelNumber' })
+            .paginate({page: page, limit: CHAN_PER_PAGE})
+            .then(function(channels){
+              async.each(channels,
+                function(c, cb){
+                  Program.find({channelID: c.id})
+                    .then(function (prog) {
 
-          if (updatedSince)
-            query.where.updatedAt = {'>': moment(updatedSince).toISOString()}
-          return Program.find(query)
-            .paginate({page: page, limit: PROG_PER_PAGE})
-            .then(function (prog) {
-              return res.ok(prog)
+                      c.listings = prog;
+
+                      listings.push(c)
+                      cb()
+
+                    })
+                    .catch(function(err){
+                      cb(err)
+                    })
+
+
+              },
+
+
+                function(err){
+                  if(err){
+                    return res.serverError({error: err})
+                  }
+                  return res.ok(listings)
+                })
+
             })
+
+
+
+        }
+        else {
+          return res.badRequest({error: "No lineups found"})
         }
       })
       .catch(function (err) {
