@@ -30,8 +30,8 @@ module.exports = function lineupFetchHook(sails) {
       //cronDelay = 10000;
       sails.log.debug('Lineup Fetches every: ' + cronDelay / 1000 + 's');
 
-      //setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
-      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
+      //setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
       return cb();
@@ -40,8 +40,8 @@ module.exports = function lineupFetchHook(sails) {
 
     fetch: function (timeout) {
       //step through devices and delete ones that aren't registered after the timeout
-      var timeout = typeof(timeout) == 'undefined'
-      sails.log.debug(timeout)
+      var timeout = typeof(timeout) == 'undefined';
+      sails.log.debug(timeout);
       sails.log.info('Begin updating lineups');
 
       Lineup.find({active: true})
@@ -49,7 +49,7 @@ module.exports = function lineupFetchHook(sails) {
 
           async.eachSeries(lineups, function (lineup, cb) {
             //save the lineup THEN retrieve and parse listings
-            //sails.log.debug(lineup)
+            sails.log.debug(lineup)
 
             if(moment(lineup.updatedAt).isBefore(moment().subtract(18,'hours'))){
               sails.log.debug("recently updated ")
