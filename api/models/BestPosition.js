@@ -27,6 +27,11 @@ module.exports = {
       defaultsTo: []
     },
 
+    channels: {
+      collection: 'channel',
+      via: 'bestPosition'
+    },
+
     network: {
       type: 'string'
     },

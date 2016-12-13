@@ -62,6 +62,10 @@ module.exports = {
 
     lineupID: {
       type: "text"
+    },
+
+    bestPosition: {
+      model: 'bestposition'
     }
   }
 

@@ -9,6 +9,10 @@ module.exports = {
 
   attributes: {
 
+    channelID: {
+      type: 'text'
+    },
+
     listingID: {
       type: 'integer'
     },

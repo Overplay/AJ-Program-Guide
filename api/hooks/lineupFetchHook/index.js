@@ -30,8 +30,8 @@ module.exports = function lineupFetchHook(sails) {
       //cronDelay = 10000;
       sails.log.debug('Lineup Fetches every: ' + cronDelay / 1000 + 's');
 
-      //setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
-      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
+      setTimeout(sails.hooks.lineupfetchhook.fetch, 60000);//TODO
+//      setTimeout(sails.hooks.lineupfetchhook.fetch, cronDelay);
 
 
       return cb();
@@ -63,7 +63,7 @@ module.exports = function lineupFetchHook(sails) {
               .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, end: endTime, timezone: sails.config.tvmedia.timezone})
               .then(function (res) {
                 sails.log.verbose("Found " + res.body.length + " channels");
-                return LineupParsingService.parse(res.body, lineup.lineupID);
+                return LineupParsingService.parse(res.body, lineup.id);
               })
               .then(function(){
                 sails.log.debug("callback");
