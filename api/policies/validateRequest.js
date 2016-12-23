@@ -17,7 +17,7 @@ module.exports = function (req, res, next) {
 
   else {
     request
-      .get(sails.config.deploymentUrl + '/device/verifyRequest')
+      .get(sails.config.AJUrl + '/device/verifyRequest')
       .query({token: token})
       .end(function(err, response){
         sails.log.debug(response.error.status)
