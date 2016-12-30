@@ -22,6 +22,9 @@ module.exports = {
           programName = program.episodeTitle
         }
 
+        if(!program.listDateTime)
+          sails.log.debug(program.listDateTime)
+
         //sails.log.debug("start")
         var programObj = {
           programID: program.showID,
@@ -55,8 +58,8 @@ module.exports = {
 
         var hash = crypto.createHash("md5").update(programObj.stationID + programObj.startTime).digest('hex')
         //TODO maybe go to hash to individualize things
-        
-        
+
+
         Program.findOne({
           hashKey: hash
         }).
@@ -73,12 +76,12 @@ module.exports = {
               })
           }
           else{
-            //create p 
+            //create p
             programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
             programObj.hashKey = hash;
             return Program.create(programObj)
               .then(function(){
-                
+
               })
           }
         })
@@ -96,14 +99,14 @@ module.exports = {
             }*
 
             //update with programObj
-            if (!newProgram.bestPosition) { 
+            if (!newProgram.bestPosition) {
               programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
             }
-            //else 
+            //else
               //sails.log.debug("EXISTS")
 
 
-            //update other fields if nec. 
+            //update other fields if nec.
             return Program.update({hashKey: hash}, programObj)
               .then(function(updated){
                 //sails.log.debug("UPDATED:" + updated)
@@ -156,7 +159,7 @@ module.exports = {
           .then(function () {
             //sails.log.verbose(program.showName + " has been initialized");
             //sails.log.debug("done")
-            
+
             cb();
             return null;
           })
