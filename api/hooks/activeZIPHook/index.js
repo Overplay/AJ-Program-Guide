@@ -45,7 +45,7 @@ module.exports = function activeZIPHook(sails) {
 
       // get venues, group by address: {zip: }
       request
-        .get(sails.config.deploymentUrl + '/api/v1/venue') //TODO policies
+        .get(sails.config.AJUrl + '/api/v1/venue') //TODO policies
         .end(function (err, data) {
           if (err) {
             sails.log.debug(err)
@@ -65,7 +65,7 @@ module.exports = function activeZIPHook(sails) {
                 async.each(v.devices, function(d, cb){
                   sails.log.debug(d)
                   request
-                    .get(sails.config.deploymentUrl + '/OGLog/deviceHeartbeat/' + d.id) //TODO policies
+                    .get(sails.config.AJUrl + '/OGLog/deviceHeartbeat/' + d.id) //TODO policies
                     .end(function (err, data) {
                       if (err) cb(err)
                       var beats = data.body
