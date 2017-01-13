@@ -57,6 +57,10 @@ module.exports = {
     },
 
     stationHD: {
+      type: "boolean"
+    },
+
+    Twitter: {
       type: "text"
     },
 

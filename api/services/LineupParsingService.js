@@ -1,15 +1,9 @@
 //Cole Grigsby 2016/10/140
 
-const DEFAULT_WIDGET_POSITION = 0; //NW position
-const DEFAULT_SCROLLER_POSITION = 1; //bottom position
-
 var crypto = require("crypto");
 
 module.exports = {
 
-
-  //TODO handle "Movie", "Video on Demand", "Off Air" - the titling is weird
-  //channel name? station ID could be across carriers
 
   parse: function (listings, lineupID) {
     //TODO parse a lineup by programs and save the programs
@@ -26,12 +20,32 @@ module.exports = {
           .then(function(c){
             return Program.destroy({channelID: c.id})
               .then( function () {
-                async.eachLimit(channel.listings, 20, function (program, cb) {
-                  program.channelID = c.id;
-                  Program.create(program)
-                    .then( function () { cb() })
+                return BestPosition.findOrCreate({
+                  type: 'network',
+                  network: channel.channel.name || channel.channel.network,
+                  stationID: channel.channel.stationID
                 })
               })
+              .then( function (bp) {
+                async.eachLimit(channel.listings, 20, function (program, cb) {
+                  program.channelID = c.id;
+                  program.widgetPosition = bp.widgetPosition;
+                  program.crawlerPosition = bp.crawlerPosition;
+
+                  Program.create(program)
+                    .then( function () { cb() })
+                }, function () {
+                  return null;
+                })
+              })
+          })
+          .then( function () {
+            cb();
+            return null;
+          })
+          .catch(function (err) {
+            sails.log.error(err);
+            cb(err)
           })
         /*Program.findOrCreate({
           hashKey: hash
@@ -104,17 +118,7 @@ module.exports = {
                 }
               })*/
           //})
-          .then(function () {
-            //sails.log.verbose(program.showName + " has been initialized");
-            //sails.log.debug("done")
 
-            cb();
-            return null;
-          })
-          .catch(function (err) {
-            sails.log.error(err);
-            cb(err)
-          })
 
 
         }

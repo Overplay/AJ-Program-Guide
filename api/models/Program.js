@@ -191,6 +191,14 @@ module.exports = {
 
     hashKey: {
       type: 'text'
+    },
+
+    crawlerPosition: {
+      type: 'integer'
+    },
+
+    widgetPosition: {
+      type: 'integer'
     }
 
 

@@ -4,7 +4,7 @@
 module.exports.hooks = {
 
   lineupFetch: {
-    hookEnabled: true,
+    hookEnabled: false,
     delay: (1000 * 60 * 60 * 24 * 1), // one day
   },
 
@@ -14,10 +14,9 @@ module.exports.hooks = {
     beatWithin: 7,
   },
 
-  programClean: {
+  cacheLineups: {
     hookEnabled: true,
-    delay: (1000 * 60 * 60 * 24), // one day,
-    days: 1 // the number of days old a program can be without being deleted
+    delay: (1000 * 60 * 60), // one hour
   }
 
 }

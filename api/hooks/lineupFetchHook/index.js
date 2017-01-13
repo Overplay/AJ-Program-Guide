@@ -49,12 +49,12 @@ module.exports = function lineupFetchHook(sails) {
 
           async.eachSeries(lineups, function (lineup, cb) {
             //save the lineup THEN retrieve and parse listings
-            sails.log.debug(lineup)
+            sails.log.debug(lineup);
 
-            if(moment(lineup.updatedAt).isAfter(moment().subtract(12,'hours'))){
-              sails.log.debug("recently updated ")
-              return cb()
-            }
+//            if(moment(lineup.updatedAt).isAfter(moment().subtract(12,'hours'))){
+//              sails.log.debug("recently updated ");
+//              return cb()
+//            }
 
             var endTime = moment().add(2, 'days').subtract(1, 'millisecond').toISOString();
 
@@ -68,7 +68,7 @@ module.exports = function lineupFetchHook(sails) {
               .then(function(){
                 sails.log.debug("callback");
                 //only updates time if above completes :)
-                lineup.updatedAt = moment().toISOString()
+                lineup.updatedAt = moment().toISOString();
                 lineup.save(function(){
                   return cb();
 
@@ -80,7 +80,7 @@ module.exports = function lineupFetchHook(sails) {
               })
           }, function(err){
             if (err){
-              sails.log.debug("Lineup not updated" + err.message)
+              sails.log.debug("Lineup not updated" + err.message);
               //retry? //TODO THIS IS BAD PROBSKIS MAYBE TEXTBAD
               setTimeout(sails.hooks.lineupfetchhook.fetch(false), 1000 * 60 * 30);
             }
