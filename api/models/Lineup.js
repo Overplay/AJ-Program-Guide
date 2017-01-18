@@ -36,9 +36,6 @@ module.exports = {
       defaultsTo: []
     },
 
-    rawJSON: {
-      type: "json"
-    },
     /*listings: {
      collection: 'program',
      via: 'lineup'

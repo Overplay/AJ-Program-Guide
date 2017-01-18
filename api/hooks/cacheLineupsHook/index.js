@@ -47,7 +47,7 @@ module.exports = function cacheLineupsHook(sails) {
               .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + '/listings/grid')
               .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, start: startTime, timezone: sails.config.tvmedia.timezone})
               .then( function (res) {
-                fs.writeFile(lineup.lineupID + '.txt', JSON.stringify(res.body), function (err) {
+                fs.writeFile("./.cache/" + lineup.lineupID, JSON.stringify(res.body), function (err) {
                   if (err) {
                     return cb(err);
                   }
@@ -64,7 +64,9 @@ module.exports = function cacheLineupsHook(sails) {
               sails.log.debug("Lineup not updated" + err.message);
               setTimeout(sails.hooks.cachelineupshook.catch, 1000 * 60 * 5) // retry in five minutes
             }
-            sails.log.debug("Lineups cached");
+            else {
+              sails.log.debug("Lineups cached");
+            }
           })
         });
 
