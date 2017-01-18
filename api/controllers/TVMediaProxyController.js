@@ -69,7 +69,7 @@ module.exports = {
         return res.serverError({ error : "Error reading cache file" })
       }
 
-      return res.ok(data);
+      return res.ok(JSON.parse(data));
     })
 
   }
