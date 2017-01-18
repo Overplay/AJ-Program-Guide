@@ -37,38 +37,49 @@ module.exports = function cacheLineupsHook(sails) {
 
       sails.log.info("Caching lineups");
 
-      Lineup.find({})
-        .then( function (lineups) {
+      fs.mkdir("./.cache", function (err) {
+        if (err && err.code === "EEXIST")
+          sails.log.debug(".cache already exists");
+        else if (err) {
+          sails.log.debug("Error creating .cache");
+          return null;
+        }
+        else
+          sails.log.debug(".cache created");
 
-          async.eachSeries(lineups, function (lineup, cb) {
-            var startTime = moment().subtract(30, 'minutes').toISOString();
+        Lineup.find({})
+          .then( function (lineups) {
 
-            request
-              .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + '/listings/grid')
-              .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, start: startTime, timezone: sails.config.tvmedia.timezone})
-              .then( function (res) {
-                fs.writeFile("./.cache/" + lineup.lineupID, JSON.stringify(res.body), function (err) {
-                  if (err) {
-                    return cb(err);
-                  }
-                  sails.log.debug('Lineup ' + lineup.lineupID + " cached");
-                  return cb();
+            async.eachSeries(lineups, function (lineup, cb) {
+              var startTime = moment().subtract(30, 'minutes').toISOString();
+
+              request
+                .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + '/listings/grid')
+                .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, start: startTime, timezone: sails.config.tvmedia.timezone})
+                .then( function (res) {
+                  fs.writeFile("./.cache/" + lineup.lineupID, JSON.stringify(res.body), function (err) {
+                    if (err) {
+                      return cb(err);
+                    }
+                    sails.log.debug('Lineup ' + lineup.lineupID + " cached");
+                    return cb();
+                  })
                 })
-              })
-              .catch( function (err) {
-                sails.log.debug("Error fetching lineup data");
-                return cb(err);
-              })
-          }, function (err) {
-            if (err) {
-              sails.log.debug("Lineup not updated" + err.message);
-              setTimeout(sails.hooks.cachelineupshook.catch, 1000 * 60 * 5) // retry in five minutes
-            }
-            else {
-              sails.log.debug("Lineups cached");
-            }
-          })
-        });
+                .catch( function (err) {
+                  sails.log.debug("Error fetching lineup data");
+                  return cb(err);
+                })
+            }, function (err) {
+              if (err) {
+                sails.log.debug("Lineup not updated" + err.message);
+                setTimeout(sails.hooks.cachelineupshook.catch, 1000 * 60 * 5) // retry in five minutes
+              }
+              else {
+                sails.log.debug("Lineups cached");
+              }
+            })
+          });
+      });
 
       setTimeout(sails.hooks.cachelineupshook.cache, cronDelay);
 
