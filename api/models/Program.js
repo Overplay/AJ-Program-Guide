@@ -8,28 +8,140 @@
 module.exports = {
 
   attributes: {
-    programID: {
-      type: 'integer'
-    },
 
-    programName: {
+    channelID: {
       type: 'text'
     },
 
-    episodeName: {
-      type: 'text'
-    },
-
-    channel: {
+    listingID: {
       type: 'integer'
     },
 
-    startTime: {
-      type: 'datetime'
+    listDateTime: {
+      type: 'text'
     },
 
-    // duration in minutes
     duration: {
+      type: 'integer'
+    },
+
+    showID: {
+      type: 'integer'
+    },
+
+    seriesID: {
+      type: 'integer'
+    },
+
+    showName: {
+      type: 'text'
+    },
+
+    episodeTitle: {
+      type: 'text'
+    },
+
+    episodeNumber: {
+      type: 'text'
+    },
+
+    parts: {
+      type: 'integer'
+    },
+
+    partNum: {
+      type: 'integer'
+    },
+
+    seriesPremiere: {
+      type: 'boolean'
+    },
+
+    seasonPremiere: {
+      type: 'boolean'
+    },
+
+    seriesFinale: {
+      type: 'boolean'
+    },
+
+    seasonFinale: {
+      type: 'boolean'
+    },
+
+    repeat: {
+      type: 'boolean'
+    },
+
+    new: {
+      type: 'boolean'
+    },
+
+    rating: {
+      type: 'text'
+    },
+
+    captioned: {
+      type: 'boolean'
+    },
+
+    educational: {
+      type: 'boolean'
+    },
+
+    blackWhite: {
+      type: 'boolean'
+    },
+
+    subtitled: {
+      type: 'boolean'
+    },
+
+    live: {
+      type: 'boolean'
+    },
+
+    hd: {
+      type: 'boolean'
+    },
+
+    descriptiveVideo: {
+      type: 'boolean'
+    },
+
+    inProgress: {
+      type: 'boolean'
+    },
+
+    showTypeID: {
+      type: 'text'
+    },
+
+    breakoutLevel: {
+      type: 'integer'
+    },
+
+    showType: {
+      type: 'text'
+    },
+
+    year: {
+      type: 'text'
+    },
+
+    guest: {
+      type: 'text'
+    },
+
+    cast: {
+      type: 'text'
+    },
+
+    director: {
+      type: 'text'
+    },
+
+    starRating: {
       type: 'integer'
     },
 
@@ -37,75 +149,56 @@ module.exports = {
       type: 'text'
     },
 
-    carrier: {
+    league: {
       type: 'text'
     },
 
-    //bestPosition: {
-   //   model: 'BestPosition'
-    //},
-    
-    bestPostions: {
-      type: 'object'
+    team1ID: {
+      type: 'integer'
     },
 
-    lineupID: {
-      type: 'string' //lineupID
+    team2ID: {
+      type: 'integer'
     },
-    //_______________________________
-    stationID: {
-      type: 'string'
-    },
-    name: {
-      type: 'string'
-    },
-    callsign: {
-      type: 'string'
-    },
-    network:{
-      type: 'string'
-    },
-    logoFilename: {
-      type: 'string'
-    },
-     showType: {
-       type: 'string'
-     },
-    showTypeID: {
-      type: 'string'
-    },
-    league: {
-      type: 'string'
-    },
-    team1ID:{
-      type: 'string'
-    },
+
     team1: {
-      type: 'string'
+      type: 'text'
     },
-    team2ID:{
-      type: 'string'
-    },
+
     team2: {
-      type: 'string'
+      type: 'text'
     },
-    hd: {
-      type: 'boolean'
-    },
+
     event: {
-      type: 'string'
+      type: 'text'
     },
+
     location: {
-      type: 'string'
+      type: 'text'
     },
+
     showPicture: {
-      type: 'string'
+      type: 'text'
     },
+
     artwork: {
       type: 'array'
     },
+
+    showHost: {
+      type: 'text'
+    },
+
     hashKey: {
-      type: 'string'
+      type: 'text'
+    },
+
+    crawlerPosition: {
+      type: 'integer'
+    },
+
+    widgetPosition: {
+      type: 'integer'
     }
 
 

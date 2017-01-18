@@ -27,18 +27,27 @@ module.exports = {
       defaultsTo: []
     },
 
+    channels: {
+      collection: 'channel',
+      via: 'bestPosition'
+    },
+
     network: {
       type: 'string'
     },
 
-    crawlerPosition: {
-      type: 'string',
-      enum: ['top', 'bottom']
+    stationID: {
+      type: 'integer'
     },
 
-    adPosition: {
-      type: 'string',
-      enum: ['top-right', 'top-left', 'bottom-right', 'bottom-left']
+    crawlerPosition: {
+      type: 'integer',
+      defaultsTo: 1
+    },
+
+    widgetPosition: {
+      type: 'integer',
+      defaultsTo: 0
     },
 
     //programs: {

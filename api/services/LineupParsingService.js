@@ -1,87 +1,52 @@
 //Cole Grigsby 2016/10/140
 
-const DEFAULT_AD_POSITION = "top-right";
-const DEFAULT_SCROLLER_POSITION = "bottom";
-
 var crypto = require("crypto");
 
 module.exports = {
 
-
-  //TODO handle "Movie", "Video on Demand", "Off Air" - the titling is weird
-  //channel name? station ID could be across carriers
 
   parse: function (listings, lineupID) {
     //TODO parse a lineup by programs and save the programs
     sails.log.info("Parsing lineup " + lineupID);
 
     return new Promise(function (resolve, reject) {
-      async.eachSeries(listings, function (program, cb) {
-        var programName = program.showName //TODO FIX FOR MOVIES
-        if (program.showTypeID == "M"){
-          programName = program.episodeTitle
-        }
+      async.eachSeries(listings, function (channel, cb) {
 
-        //sails.log.debug("start")
-        var programObj = {
-          programID: program.showID,
-          programName: programName,
-          episodeName: program.episodeTitle,
-          channel: program.channelNumber,
-          description: program.description,
-          duration: program.duration,
-          startTime: new Date(program.listDateTime),
-          carrier: (program.network || program.name),
-          lineupID: lineupID,
-          stationID: program.stationID,
-          name: program.name,
-          callsign: program.name,
-          network: program.network,
-          logoFilename: program.logoFilename,
-          showType: program.showType,
-          showTypeID: program.showTypeID,
-          league: program.league,
-          team1ID: program.team1ID,
-          team1: program.team1,
-          team2ID: program.team2ID,
-          team2: program.team2,
-          hd: program.hd,
-          event: program.event,
-          location: program.location,
-          showPicture: program.showPicture,
-          artwork: program.artwork
-        }
-
-
-        var hash = crypto.createHash("md5").update(programObj.stationID + programObj.startTime).digest('hex')
+        // var hash = crypto.createHash("md5").update(programObj.stationID + programObj.startTime).digest('hex')
         //TODO maybe go to hash to individualize things
-        
-        
-        Program.findOne({
-          hashKey: hash
-        }).
-          then(function(p){
-          if (p){
-            //update p
-            return Program.update({hashKey: hash}, programObj)
-              .then(function(updated){
-                //sails.log.debug("UPDATED:" + updated)
-                if(updated.length > 1){
-                  sails.log.debug(updated)
-                  sails.log.debug("FUCK FUCK FUCK UPDATED MORE THAN 1 PROG")
-                }
+        channel.channel.lineupID = lineupID;
+
+        Channel.findOrCreate(channel.channel)
+          .then(function(c){
+            return Program.destroy({channelID: c.id})
+              .then( function () {
+                return BestPosition.findOrCreate({
+                  type: 'network',
+                  network: channel.channel.name || channel.channel.network,
+                  stationID: channel.channel.stationID
+                })
               })
-          }
-          else{
-            //create p 
-            programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
-            programObj.hashKey = hash;
-            return Program.create(programObj)
-              .then(function(){
-                
+              .then( function (bp) {
+                async.eachLimit(channel.listings, 20, function (program, cb) {
+                  program.channelID = c.id;
+                  program.widgetPosition = bp.widgetPosition;
+                  program.crawlerPosition = bp.crawlerPosition;
+
+                  Program.create(program)
+                    .then( function () { cb() })
+                }, function () {
+                  return null;
+                })
               })
-          }
-        })
+          })
+          .then( function () {
+            cb();
+            return null;
+          })
+          .catch(function (err) {
+            sails.log.error(err);
+            cb(err)
+          })
         /*Program.findOrCreate({
           hashKey: hash
 
@@ -96,14 +61,14 @@ module.exports = {
             }*
 
             //update with programObj
-            if (!newProgram.bestPosition) { 
+            if (!newProgram.bestPosition) {
               programObj.bestPosition = {crawler: DEFAULT_SCROLLER_POSITION, ad: DEFAULT_AD_POSITION}
             }
-            //else 
+            //else
               //sails.log.debug("EXISTS")
 
 
-            //update other fields if nec. 
+            //update other fields if nec.
             return Program.update({hashKey: hash}, programObj)
               .then(function(updated){
                 //sails.log.debug("UPDATED:" + updated)
@@ -153,17 +118,7 @@ module.exports = {
                 }
               })*/
           //})
-          .then(function () {
-            //sails.log.verbose(program.showName + " has been initialized");
-            //sails.log.debug("done")
-            
-            cb();
-            return null;
-          })
-          .catch(function (err) {
-            sails.log.error(err);
-            cb(err)
-          })
+
 
 
         }
