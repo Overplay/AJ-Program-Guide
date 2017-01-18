@@ -58,14 +58,14 @@ module.exports = {
 
     var params = req.allParams();
 
-    if (!params.lineupID) {
+    if (!params.id) {
       return res.badRequest({ error: "Missing lineupID" });
     }
 
-    fs.readFile('./.cache/' + params.lineupID, 'utf8', function (err, data) {
+    fs.readFile('./cache/' + params.id, 'utf8', function (err, data) {
       if (err) {
         if (err.code = "ENOENT")
-          return res.notFound({ error : "Cache file for lineup " + params.lineupID + " could not be found"});
+          return res.notFound({ error : "Cache file for lineup " + params.id + " could not be found"});
         return res.serverError({ error : "Error reading cache file" })
       }
 

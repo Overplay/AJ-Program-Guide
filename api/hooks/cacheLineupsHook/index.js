@@ -37,15 +37,15 @@ module.exports = function cacheLineupsHook(sails) {
 
       sails.log.info("Caching lineups");
 
-      fs.mkdir("./.cache", function (err) {
+      fs.mkdir("./cache", function (err) {
         if (err && err.code === "EEXIST")
-          sails.log.debug(".cache already exists");
+          sails.log.debug("cache already exists");
         else if (err) {
-          sails.log.debug("Error creating .cache");
+          sails.log.error("Error creating cache");
           return null;
         }
         else
-          sails.log.debug(".cache created");
+          sails.log.debug("cache created");
 
         Lineup.find({})
           .then( function (lineups) {
@@ -57,7 +57,8 @@ module.exports = function cacheLineupsHook(sails) {
                 .get(sails.config.tvmedia.url + '/lineups/' + lineup.lineupID + '/listings/grid')
                 .query({lineupID: lineup.lineupID, api_key: sails.config.tvmedia.api_key, start: startTime, timezone: sails.config.tvmedia.timezone})
                 .then( function (res) {
-                  fs.writeFile("./.cache/" + lineup.lineupID, JSON.stringify(res.body), function (err) {
+                  // TODO validate JSON
+                  fs.writeFile("./cache/" + lineup.lineupID, JSON.stringify(res.body), function (err) {
                     if (err) {
                       return cb(err);
                     }
@@ -66,12 +67,12 @@ module.exports = function cacheLineupsHook(sails) {
                   })
                 })
                 .catch( function (err) {
-                  sails.log.debug("Error fetching lineup data");
+                  sails.log.error("Error fetching lineup data");
                   return cb(err);
                 })
             }, function (err) {
               if (err) {
-                sails.log.debug("Lineup not updated" + err.message);
+                sails.log.error("Lineup not updated" + err.message);
                 setTimeout(sails.hooks.cachelineupshook.catch, 1000 * 60 * 5) // retry in five minutes
               }
               else {
